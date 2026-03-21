@@ -4,24 +4,24 @@
 #include <opencv2/opencv.hpp>
 #include <QString>
 
-class Filters {
+class Filter {
 public:
-    virtual ~Filters();
-    virtual void apply(const cv::Mat& image) = 0;
-    virtual QString getFilter() const = 0;
+    virtual ~Filter() = default;
+    virtual void apply(cv::Mat& image) = 0;
+    virtual QString getFilterName() const = 0;
 
 };
 
-class BlackAndWhiteFilter: Filters {
+class BlackAndWhiteFilter: public Filter {
 public:
-    void apply(const cv::Mat& image) override;
-    QString getFilter() const override;
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
 };
 
-class BlurFilter: Filters {
+class BlurFilter: public Filter {
 public:
-    void apply(const cv::Mat& image) override;
-    QString getFilter() const override;
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
 };
 
 

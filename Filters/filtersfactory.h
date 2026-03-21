@@ -7,7 +7,7 @@
 
 class FiltersFactory {
 public:
-    static std::unique_ptr<Filters> createFilter(const QString& filterName);
+    static std::unique_ptr<Filter> createFilter(const QString& filterName);
 };
 
 #endif // FILTERSFACTORY_H
