@@ -2,20 +2,18 @@
 #define IMAGEHISTORY_H
 
 #include <QString>
-#include <vector>
+#include <QStringList>
 
 class ImageHistory {
 private:
     QString imageName;
     QString imagePath;
-    std::vector<QString> filters;
+    QStringList appliedFiltersHistory;
 public:
-    ImageHistory(const QString& imagePath, const QString& name);
-    void addFilter(const QString& filter);
-    void clearFilters();
+    ImageHistory(const QString& imagePath, const QString& imageName, const QStringList& appliedFiltersHistory);
     QString getImagePath() const;
     QString getImageName() const;
-    std::vector<QString> getFilters() const;
+    const QStringList& getFiltersHistory() const;
 };
 
 #endif // IMAGEHISTORY_H

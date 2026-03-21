@@ -2,17 +2,19 @@
 #define IMAGEHISTORYMANAGER_H
 
 #include "imagehistory.h"
+#include <vector>
+#include <QStringList>
 
 class ImageHistoryManager {
 private:
     std::vector<ImageHistory> history;
+    QStringList historyNames;
 public:
-    void addHistory(const ImageHistory& obj);
-    void removeHistory(const QString& objName);
+    void addHistory(const QString& imagePath, const QString& imageName, const QStringList& appliedFiltersHistory);
+    void removeHistory(const int& index);
     void clearHistory();
-
-    ImageHistory* getImageHistory(const QString& objName) const;
-    std::vector<QString> getHistoryNames();
+    const ImageHistory* getImageHistory(const QString& imageName) const;
+    const QStringList& getHistoryNames() const;
 };
 
 #endif // IMAGEHISTORYMANAGER_H
