@@ -25,8 +25,12 @@ SOURCES += \
     ImageHistoryManager/imagehistorymanager.cpp \
     ImageIO/imageio.cpp \
     ImageManager/imagemanager.cpp \
+    UI/draganddropevent.cpp \
     UI/main.cpp \
-    UI/mainwindow.cpp
+    UI/mainwindow.cpp \
+    UI/displayimage.cpp \
+    UI/historywindow.cpp \
+    UI/saveimage.cpp
 
 HEADERS += \
     Converter/converter.h \
@@ -37,10 +41,17 @@ HEADERS += \
     ImageHistoryManager/imagehistorymanager.h \
     ImageIO/imageio.h \
     ImageManager/imagemanager.h \
-    UI/mainwindow.h
+    UI/draganddropevent.h \
+    UI/mainwindow.h \
+    UI/displayimage.h \
+    UI/historywindow.h \
+    UI/saveimage.h
 
 FORMS += \
-    UI/mainwindow.ui
+    UI/mainwindow.ui \
+    UI/displayimage.ui \
+    UI/historywindow.ui \
+    UI/saveimage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

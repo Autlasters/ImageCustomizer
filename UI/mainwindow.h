@@ -18,8 +18,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void exit();
 private:
     Ui::MainWindow *ui;
+public slots:
+    void callHistoryWindow();
+    void callExit();
+    void callProcess();
 };
 #endif // MAINWINDOW_H
