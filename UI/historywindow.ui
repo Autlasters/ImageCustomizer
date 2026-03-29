@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>History</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -101,7 +101,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QComboBox" name="imageList_2"/>
+          <widget class="QComboBox" name="filtersList"/>
          </item>
         </layout>
        </item>

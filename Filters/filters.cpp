@@ -1,9 +1,12 @@
 #include "filters.h"
 
 void BlackAndWhiteFilter::apply(cv::Mat& image) {
+    if (image.empty()) return;
+
     cv::Mat result;
     cv::cvtColor(image, result, cv::COLOR_BGR2GRAY);
-    image = result;
+
+    cv::cvtColor(result, image, cv::COLOR_GRAY2BGR);
 }
 
 QString BlackAndWhiteFilter::getFilterName() const{

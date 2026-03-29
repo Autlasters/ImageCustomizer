@@ -18,6 +18,7 @@ public:
     const cv::Mat& getProcessedImage() const;
     void resetProcessedImage();
     void resetAppliedFiltersList();
+    void resetOriginalImage();
     const QStringList& getFiltersList() const;
 };
 

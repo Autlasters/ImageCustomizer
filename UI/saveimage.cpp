@@ -1,6 +1,8 @@
 #include "saveimage.h"
 #include "ui_saveimage.h"
 
+#include <QMessageBox>
+
 SaveImage::SaveImage(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::SaveImage)
@@ -17,11 +19,17 @@ SaveImage::~SaveImage()
 }
 
 void SaveImage::callSave() {
-    //.......
+    QString name = ui->nameField->text().trimmed();
+    if(name.isEmpty()){
+        QMessageBox::warning(this, "Error", "Name field can not be empty!");
+        return;
+    }
+    emit saveConfirmed(name);
     close();
 }
 
 void SaveImage::callCancel()
 {
+    emit saveCanceled();
     close();
 }

@@ -20,6 +20,9 @@ private:
 public slots:
     void callSave();
     void callCancel();
+signals:
+    void saveConfirmed(const QString name);
+    void saveCanceled();
 };
 
 #endif // SAVEIMAGE_H

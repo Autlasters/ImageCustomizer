@@ -9,7 +9,6 @@ public:
     virtual ~Filter() = default;
     virtual void apply(cv::Mat& image) = 0;
     virtual QString getFilterName() const = 0;
-
 };
 
 class BlackAndWhiteFilter: public Filter {

@@ -1,7 +1,7 @@
 #include "filtersfactory.h"
 
 std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
-    if(filterName == "BlackAndWhite"){
+    if(filterName == "Black and White"){
         return std::make_unique<BlackAndWhiteFilter>();
     }
     if(filterName == "Blur"){

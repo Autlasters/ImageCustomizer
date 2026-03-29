@@ -15,6 +15,7 @@ public:
     void clearHistory();
     const ImageHistory* getImageHistory(const QString& imageName) const;
     const QStringList& getHistoryNames() const;
+    const std::vector<ImageHistory>& getAll() const;
 };
 
 #endif // IMAGEHISTORYMANAGER_H

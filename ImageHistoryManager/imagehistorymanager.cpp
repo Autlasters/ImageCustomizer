@@ -29,3 +29,7 @@ const ImageHistory* ImageHistoryManager::getImageHistory(const QString& imageNam
 const QStringList& ImageHistoryManager::getHistoryNames() const{
     return historyNames;
 }
+
+const std::vector<ImageHistory> &ImageHistoryManager::getAll() const {
+    return history;
+}

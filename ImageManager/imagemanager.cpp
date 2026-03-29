@@ -1,13 +1,30 @@
 #include "imagemanager.h"
 #include "filtersfactory.h"
 
+#include <QFile>
+#include <QByteArray>
+
+#include <QDebug>
+
 bool ImageManager::loadImage(const QString& path){
     if(path.isEmpty()){
         return false;
     }
 
-    originalImage = cv::imread(path.toStdString());
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly)){
+        qDebug() << "Cannot open file:" << path;
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+
+    std::vector<uchar> buffer(data.begin(), data.end());
+
+    originalImage = cv::imdecode(buffer, cv::IMREAD_COLOR);
+
     if(originalImage.empty()){
+        qDebug() << "imdecode failed";
         return false;
     }
 
@@ -25,6 +42,8 @@ void ImageManager::applyFilter(const QString& filterName){
         return;
     }
 
+    processedImage = originalImage.clone();
+
     filter->apply(processedImage);
     appliedFilters << filter->getFilterName();
 }
@@ -37,6 +56,10 @@ const cv::Mat& ImageManager::getProcessedImage() const{
     return processedImage;
 }
 
+const QStringList& ImageManager::getFiltersList() const{
+    return appliedFilters;
+}
+
 void ImageManager::resetProcessedImage(){
     if(originalImage.empty()){
         return;
@@ -45,11 +68,11 @@ void ImageManager::resetProcessedImage(){
     resetAppliedFiltersList();
 }
 
-const QStringList& ImageManager::getFiltersList() const{
-    return appliedFilters;
-}
-
 void ImageManager::resetAppliedFiltersList(){
     appliedFilters.clear();
+}
+
+void ImageManager::resetOriginalImage() {
+    originalImage.release();
 }
 
