@@ -19,38 +19,31 @@ INCLUDEPATH += $$PWD/UI
 SOURCES += \
     Converter/converter.cpp \
     Filters/filters.cpp \
+    Filters/filterscollector.cpp \
     Filters/filtersfactory.cpp \
-    ImageHistoryManager/imagehistory.cpp \
-    ImageHistoryIO/imagehistoryio.cpp \
-    ImageHistoryManager/imagehistorymanager.cpp \
     ImageIO/imageio.cpp \
     ImageManager/imagemanager.cpp \
     UI/draganddropevent.cpp \
     UI/main.cpp \
     UI/mainwindow.cpp \
     UI/displayimage.cpp \
-    UI/historywindow.cpp \
     UI/saveimage.cpp
 
 HEADERS += \
     Converter/converter.h \
     Filters/filters.h \
+    Filters/filterscollector.h \
     Filters/filtersfactory.h \
-    ImageHistoryManager/imagehistory.h \
-    ImageHistoryIO/imagehistoryio.h \
-    ImageHistoryManager/imagehistorymanager.h \
     ImageIO/imageio.h \
     ImageManager/imagemanager.h \
     UI/draganddropevent.h \
     UI/mainwindow.h \
     UI/displayimage.h \
-    UI/historywindow.h \
     UI/saveimage.h
 
 FORMS += \
     UI/mainwindow.ui \
     UI/displayimage.ui \
-    UI/historywindow.ui \
     UI/saveimage.ui
 
 # Default rules for deployment.

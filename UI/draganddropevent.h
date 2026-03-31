@@ -27,6 +27,8 @@ protected:
     void dropEvent(QDropEvent *event);
 public:
     explicit CustomView(QWidget *parent = nullptr);
+    QGraphicsScene *getScene() const;
+    void clearScene();
 signals:
     void imageDropped(const QString& path);
 };

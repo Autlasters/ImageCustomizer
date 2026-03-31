@@ -1,30 +1,23 @@
 #include "imagemanager.h"
 #include "filtersfactory.h"
+#include "converter.h"
 
-#include <QFile>
-#include <QByteArray>
-
-#include <QDebug>
+#include <QImage>
 
 bool ImageManager::loadImage(const QString& path){
     if(path.isEmpty()){
         return false;
     }
 
-    QFile file(path);
-    if(!file.open(QIODevice::ReadOnly)){
-        qDebug() << "Cannot open file:" << path;
+    QImage image;
+    image.load(path.toUtf8());
+    if(image.isNull()){
         return false;
     }
 
-    QByteArray data = file.readAll();
-
-    std::vector<uchar> buffer(data.begin(), data.end());
-
-    originalImage = cv::imdecode(buffer, cv::IMREAD_COLOR);
+    originalImage = Converter::QImageToMat(image);
 
     if(originalImage.empty()){
-        qDebug() << "imdecode failed";
         return false;
     }
 
@@ -36,7 +29,7 @@ bool ImageManager::loadImage(const QString& path){
 void ImageManager::applyFilter(const QString& filterName){
     std::unique_ptr<Filter> filter = FiltersFactory::createFilter(filterName);
     if(!filter){
-        return ;
+        return;
     }
     if(processedImage.empty()){
         return;

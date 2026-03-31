@@ -13,6 +13,7 @@ class SaveImage : public QDialog
 
 public:
     explicit SaveImage(QWidget *parent = nullptr);
+    void setSaveEnable(const QString& name);
     ~SaveImage();
 
 private:

@@ -9,6 +9,17 @@ CustomView::CustomView(QWidget *parent): QGraphicsView(parent) {
     viewport()->installEventFilter(this);
 }
 
+QGraphicsScene *CustomView::getScene() const {
+    return scene;
+}
+
+void CustomView::clearScene() {
+    if(scene){
+        scene->clear();
+        resetTransform();
+    }
+}
+
 void CustomView::dragEnterEvent(QDragEnterEvent *event) {
     if(event->mimeData()->hasUrls()){
         event->acceptProposedAction();
@@ -34,9 +45,10 @@ void CustomView::dropEvent(QDropEvent *event) {
         QPixmap img(filePath);
         if(img.isNull()) continue;
         scene->clear();
+        resetTransform();
         QGraphicsPixmapItem* item = scene->addPixmap(img);
-        scene->setSceneRect(img.rect());
-        fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+        scene->setSceneRect(item->boundingRect());
+        fitInView(item, Qt::KeepAspectRatio);
         event->acceptProposedAction();
         emit imageDropped(filePath);
         break;
