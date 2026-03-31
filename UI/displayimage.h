@@ -18,6 +18,7 @@ public:
     void setImage(const QImage& image);
     void resizeEvent(QResizeEvent * event);
     void showEvent(QShowEvent *event);
+    void setSaveEnable(bool permission);
     ~DisplayImage();
 
 private:

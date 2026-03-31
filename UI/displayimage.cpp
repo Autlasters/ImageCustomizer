@@ -11,6 +11,7 @@ DisplayImage::DisplayImage(QWidget *parent)
     ui->setupUi(this);
     ui->graphicsView->setScene(scene);
 
+    ui->saveButton->setEnabled(false);
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
     ui->graphicsView->setAlignment(Qt::AlignCenter);
@@ -37,6 +38,10 @@ void DisplayImage::showEvent(QShowEvent *event) {
     if (pixmapItem) {
         ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
     }
+}
+
+void DisplayImage::setSaveEnable(bool permission) {
+    ui->saveButton->setEnabled(permission);
 }
 
 DisplayImage::~DisplayImage()

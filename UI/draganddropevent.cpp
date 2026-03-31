@@ -34,11 +34,23 @@ void CustomView::dropEvent(QDropEvent *event) {
         QPixmap img(filePath);
         if(img.isNull()) continue;
         scene->clear();
+        resetTransform();
         QGraphicsPixmapItem* item = scene->addPixmap(img);
-        scene->setSceneRect(img.rect());
-        fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+        scene->setSceneRect(item->boundingRect());
+        fitInView(item, Qt::KeepAspectRatio);
         event->acceptProposedAction();
         emit imageDropped(filePath);
         break;
+    }
+}
+
+QGraphicsScene *CustomView::getScene() const {
+    return scene;
+}
+
+void CustomView::clearScene() {
+    if(scene){
+        scene->clear();
+        resetTransform();
     }
 }

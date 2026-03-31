@@ -14,7 +14,7 @@ class SaveImage : public QDialog
 public:
     explicit SaveImage(QWidget *parent = nullptr);
     ~SaveImage();
-
+    void setSaveEnable(const QString& name);
 private:
     Ui::SaveImage *ui;
 public slots:

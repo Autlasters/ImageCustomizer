@@ -7,18 +7,23 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), scene(new QGraphicsScene(this))
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->processButton->setEnabled(false);
+    ui->clearButton->setEnabled(false);
+    ui->DisplyaFolderPathField->setReadOnly(true);
 
     connect(ui->historyButton, &QPushButton::clicked, this, &MainWindow::callHistoryWindow);
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callExit);
     connect(ui->processButton, &QPushButton::clicked, this, &MainWindow::callProcess);
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
+    connect(ui->dragAndDropFiled, &CustomView::imageDropped, this, &MainWindow::checkDragAndDrop);
 
-    dragAndDropField = ui->dragAndDropFiled;
-    connect(dragAndDropField, &CustomView::imageDropped, this, &MainWindow::imageDropped);
+    dragAndDropEvent = ui->dragAndDropFiled;
+    connect(dragAndDropEvent, &CustomView::imageDropped, this, &MainWindow::imageDropped);
 
     ui->filtersList->addItems({"Black and White", "Blur"});
     // histroyImageIO.setPath("Images History"); in development
@@ -59,6 +64,9 @@ void MainWindow::callProcess() {
     connect(displayWindow, &QObject::destroyed, this, [this]() {displayWindow = nullptr;});
     displayWindow->setImage(image);
     connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
+    if(!ui->DisplyaFolderPathField->text().isEmpty()){
+        displayWindow->setSaveEnable(true);
+    }
     displayWindow->show();
     QString name  = QString::number(QDateTime::currentSecsSinceEpoch());
     //histroyImageIO.saveImage(imageManager.getProcessedImage(), name);  in development
@@ -67,14 +75,15 @@ void MainWindow::callProcess() {
 }
 
 void MainWindow::callClear() {
-    if(scene){
-        scene->clear();
-    }
+    dragAndDropEvent->clearScene();
     ui->dragAndDropFiled->resetTransform();
     ui->dragAndDropFiled->viewport()->update();
     imageManager.resetOriginalImage();
     imageManager.resetProcessedImage();
     imageManager.resetAppliedFiltersList();
+    ui->processButton->setEnabled(false);
+    ui->clearButton->setEnabled(false);
+
 }
 
 void MainWindow::imageDropped(const QString &path) {
@@ -82,8 +91,8 @@ void MainWindow::imageDropped(const QString &path) {
     cv::Mat mat = imageManager.getProcessedImage();
     QImage image = Converter::MatToQImge(mat);
     QPixmap pixmap = QPixmap::fromImage(image);
-    scene->addPixmap(pixmap);
-    ui->dragAndDropFiled->setScene(scene);
+    dragAndDropEvent->getScene()->addPixmap(pixmap);
+    ui->dragAndDropFiled->setScene(dragAndDropEvent->getScene());
 }
 
 void MainWindow::saveImage(const QString &name, const QImage &image) {
@@ -101,4 +110,11 @@ void MainWindow::showHistory(const QString &path) {
     displayWindow->setImage(image);
     connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
     displayWindow->show();
+}
+
+void MainWindow::checkDragAndDrop(const QString& path) {
+    if(!path.isEmpty()){
+        ui->processButton->setEnabled(true);
+        ui->clearButton->setEnabled(true);
+    }
 }

@@ -35,8 +35,7 @@ private:
     ImageIO userImageIO;
     ImageIO histroyImageIO;
     ImageHistoryIO historyFileIO;
-    CustomView *dragAndDropField = nullptr;
-    QGraphicsScene *scene = nullptr;
+    CustomView *dragAndDropEvent = nullptr;
     DisplayImage *displayWindow = nullptr;
     HistoryWindow *historyWindow = nullptr;
 public slots:
@@ -48,5 +47,6 @@ public slots:
     void imageDropped(const QString& path);
     void saveImage(const QString& name, const QImage& image);
     void showHistory(const QString& path);
+    void checkDragAndDrop(const QString& path);
 };
 #endif // MAINWINDOW_H
