@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QString>
+
 #include "filters.h"
 
 class FiltersFactory {

@@ -5,14 +5,18 @@
 #include <QImage>
 #include <QGraphicsScene>
 
-namespace Ui {
-class DisplayImage;
-}
+#include "saveimage.h"
 
-class DisplayImage : public QDialog
-{
+namespace Ui { class DisplayImage; }
+
+class DisplayImage : public QDialog {
     Q_OBJECT
-
+private:
+    Ui::DisplayImage *ui;
+    SaveImage *saveWinodw = nullptr;
+    QImage image;
+    QGraphicsScene *scene = nullptr;
+    QGraphicsPixmapItem *pixmapItem = nullptr;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
     void setImage(const QImage& image);
@@ -20,12 +24,6 @@ public:
     void showEvent(QShowEvent *event);
     void setSaveEnable(bool permission);
     ~DisplayImage();
-
-private:
-    Ui::DisplayImage *ui;
-    QImage image;
-    QGraphicsScene *scene = nullptr;
-    QGraphicsPixmapItem *pixmapItem = nullptr;
 public slots:
     void callSave();
     void callClose(); 

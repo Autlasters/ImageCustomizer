@@ -3,21 +3,16 @@
 
 #include <QDialog>
 
-namespace Ui {
-class SaveImage;
-}
+namespace Ui { class SaveImage; }
 
-class SaveImage : public QDialog
-{
+class SaveImage : public QDialog {
     Q_OBJECT
-
+private:
+    Ui::SaveImage *ui;
 public:
     explicit SaveImage(QWidget *parent = nullptr);
     void setSaveEnable(const QString& name);
     ~SaveImage();
-
-private:
-    Ui::SaveImage *ui;
 public slots:
     void callSave();
     void callCancel();

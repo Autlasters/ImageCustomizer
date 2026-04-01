@@ -1,23 +1,10 @@
 #include "draganddropevent.h"
 
-DragAndDropEvent::DragAndDropEvent() {}
-
 CustomView::CustomView(QWidget *parent): QGraphicsView(parent) {
     setAcceptDrops(true);
     scene = new QGraphicsScene(this);
     setScene(scene);
     viewport()->installEventFilter(this);
-}
-
-QGraphicsScene *CustomView::getScene() const {
-    return scene;
-}
-
-void CustomView::clearScene() {
-    if(scene){
-        scene->clear();
-        resetTransform();
-    }
 }
 
 void CustomView::dragEnterEvent(QDragEnterEvent *event) {
@@ -36,14 +23,22 @@ void CustomView::dragMoveEvent(QDragMoveEvent *event) {
 }
 
 void CustomView::dropEvent(QDropEvent *event) {
-    if(event->source() == this) return;
-    if(!event->mimeData()->hasUrls()) return;
+    if(event->source() == this){
+        return;
+    }
+    if(!event->mimeData()->hasUrls()){
+        return;
+    }
     const QList<QUrl>& urlList = event->mimeData()->urls();
     for(const QUrl& url : urlList){
-        if(!url.isLocalFile()) continue;
+        if(!url.isLocalFile()){
+            continue;
+        }
         QString filePath = url.toLocalFile();
         QPixmap img(filePath);
-        if(img.isNull()) continue;
+        if(img.isNull()){
+            continue;
+        }
         scene->clear();
         resetTransform();
         QGraphicsPixmapItem* item = scene->addPixmap(img);
@@ -52,5 +47,16 @@ void CustomView::dropEvent(QDropEvent *event) {
         event->acceptProposedAction();
         emit imageDropped(filePath);
         break;
+    }
+}
+
+QGraphicsScene *CustomView::getScene() const {
+    return scene;
+}
+
+void CustomView::clearScene() {
+    if(scene){
+        scene->clear();
+        resetTransform();
     }
 }

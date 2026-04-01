@@ -31,9 +31,6 @@ void ImageManager::applyFilter(const QString& filterName){
     if(!filter){
         return;
     }
-    if(processedImage.empty()){
-        return;
-    }
 
     processedImage = originalImage.clone();
 
@@ -41,16 +38,8 @@ void ImageManager::applyFilter(const QString& filterName){
     appliedFilters << filter->getFilterName();
 }
 
-const cv::Mat& ImageManager::getOriginalImage() const {
-    return originalImage;
-}
-
-const cv::Mat& ImageManager::getProcessedImage() const{
-    return processedImage;
-}
-
-const QStringList& ImageManager::getFiltersList() const{
-    return appliedFilters;
+void ImageManager::resetOriginalImage() {
+    originalImage.release();
 }
 
 void ImageManager::resetProcessedImage(){
@@ -65,7 +54,15 @@ void ImageManager::resetAppliedFiltersList(){
     appliedFilters.clear();
 }
 
-void ImageManager::resetOriginalImage() {
-    originalImage.release();
+const cv::Mat& ImageManager::getOriginalImage() const {
+    return originalImage;
+}
+
+const cv::Mat& ImageManager::getProcessedImage() const{
+    return processedImage;
+}
+
+const QStringList& ImageManager::getFiltersList() const{
+    return appliedFilters;
 }
 

@@ -1,5 +1,6 @@
 #ifndef FILTERSCOLLECTOR_H
 #define FILTERSCOLLECTOR_H
+
 #include <QStringList>
 
 class FiltersCollector {

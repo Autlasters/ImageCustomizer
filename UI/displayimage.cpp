@@ -1,24 +1,23 @@
-#include "displayimage.h"
-#include "ui_displayimage.h"
-#include "saveimage.h"
-
 #include <QGraphicsPixmapItem>
 
-DisplayImage::DisplayImage(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::DisplayImage), scene(new QGraphicsScene(this))
-{
+#include "displayimage.h"
+#include "ui_displayimage.h"
+
+DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), scene(new QGraphicsScene(this)) {
     ui->setupUi(this);
     ui->graphicsView->setScene(scene);
-
     ui->saveButton->setEnabled(false);
+    ui->graphicsView->setAlignment(Qt::AlignCenter);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
-    ui->graphicsView->setAlignment(Qt::AlignCenter);
 }
 
 void DisplayImage::setImage(const QImage &image) {
+    if(image.isNull()){
+        scene->clear();
+        return;
+    }
     this->image = image;
     QPixmap pixmap = QPixmap::fromImage(this->image);
     scene->clear();
@@ -45,13 +44,12 @@ void DisplayImage::setSaveEnable(bool permission) {
     ui->saveButton->setEnabled(permission);
 }
 
-DisplayImage::~DisplayImage()
-{
+DisplayImage::~DisplayImage() {
     delete ui;
 }
 
 void DisplayImage::callSave() {
-    SaveImage *saveWinodw = new SaveImage(this);
+    saveWinodw = new SaveImage(this);
     connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name) {emit saveRequest(name, this->image);});
     saveWinodw->exec();
 }

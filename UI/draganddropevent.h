@@ -11,22 +11,16 @@
 #include <QMimeData>
 #include <QGraphicsPixmapItem>
 
-class DragAndDropEvent
-{
-public:
-    DragAndDropEvent();
-};
-
-class CustomView: public QGraphicsView{
+class CustomView: public QGraphicsView {
     Q_OBJECT
 protected:
     QGraphicsScene *scene = nullptr;
+public:
+    explicit CustomView(QWidget *parent = nullptr);
     void dragEnterEvent(QDragEnterEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
-public:
-    explicit CustomView(QWidget *parent = nullptr);
     QGraphicsScene *getScene() const;
     void clearScene();
 signals:

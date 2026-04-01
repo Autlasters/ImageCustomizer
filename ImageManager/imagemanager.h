@@ -4,7 +4,6 @@
 #include <opencv2/opencv.hpp>
 #include <Qstring>
 #include <QStringList>
-#include "filters.h"
 
 class ImageManager {
 private:
@@ -14,11 +13,11 @@ private:
 public:
     bool loadImage(const QString& path);
     void applyFilter(const QString& filterName);
-    const cv::Mat& getOriginalImage() const;
-    const cv::Mat& getProcessedImage() const;
+    void resetOriginalImage();
     void resetProcessedImage();
     void resetAppliedFiltersList();
-    void resetOriginalImage();
+    const cv::Mat& getOriginalImage() const;
+    const cv::Mat& getProcessedImage() const;
     const QStringList& getFiltersList() const;
 };
 

@@ -1,5 +1,4 @@
 #include "imageio.h"
-#include <QDebug>
 #include "converter.h"
 
 bool ImageIO::setPath(const QString& path) {
@@ -11,10 +10,14 @@ bool ImageIO::setPath(const QString& path) {
 }
 
 bool ImageIO::saveImage(const cv::Mat& image, const QString& imageName){
-    if(path.isEmpty() || imageName.isEmpty() || image.empty()) return false;
+    if(path.isEmpty() || imageName.isEmpty() || image.empty()){
+        return false;
+    }
     QString fullPath = path + "/" + imageName + ".png";
     QImage img = Converter::MatToQImge(image);
-    if (img.isNull()) return false;
+    if (img.isNull()){
+        return false;
+    }
     return img.save(fullPath);
 }
 

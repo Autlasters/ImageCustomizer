@@ -10,21 +10,12 @@
 #include "displayimage.h"
 #include "draganddropevent.h"
 
-
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
-
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-    void exit();
 private:
     Ui::MainWindow *ui;
     ImageManager imageManager;
@@ -32,11 +23,14 @@ private:
     ImageIO histroyImageIO;
     CustomView *dragAndDropEvent = nullptr;
     DisplayImage *displayWindow = nullptr;
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 public slots:
     void callSearch();
-    void callExit();
     void callProcess();
     void callClear();
+    void callExit();
     void imageDropped(const QString& path);
     void saveImage(const QString& name, const QImage& image);
     void checkDragAndDrop(const QString& path);

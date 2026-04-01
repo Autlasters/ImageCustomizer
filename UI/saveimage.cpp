@@ -1,14 +1,8 @@
 #include "saveimage.h"
 #include "ui_saveimage.h"
 
-#include <QMessageBox>
-
-SaveImage::SaveImage(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::SaveImage)
-{
+SaveImage::SaveImage(QWidget *parent): QDialog(parent), ui(new Ui::SaveImage) {
     ui->setupUi(this);
-
     ui->saveButton->setEnabled(false);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &SaveImage::callSave);
@@ -20,8 +14,7 @@ void SaveImage::setSaveEnable(const QString &name) {
     ui->saveButton->setEnabled(!name.trimmed().isEmpty());
 }
 
-SaveImage::~SaveImage()
-{
+SaveImage::~SaveImage() {
     delete ui;
 }
 
@@ -31,8 +24,7 @@ void SaveImage::callSave() {
     close();
 }
 
-void SaveImage::callCancel()
-{
+void SaveImage::callCancel() {
     emit saveCanceled();
     close();
 }
