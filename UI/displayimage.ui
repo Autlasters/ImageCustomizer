@@ -80,6 +80,44 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="displayOriginalImageButton">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>125</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Original</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="displayProcessedImageButton">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>125</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Processed</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="closeButton">
          <property name="minimumSize">
           <size>

@@ -38,15 +38,16 @@ void MainWindow::callProcess() {
         return;
     }
     imageManager.applyFilter(filter);
-    QImage image = Converter::MatToQImge(imageManager.getProcessedImage());
+    QImage processedImg = Converter::MatToQImge(imageManager.getProcessedImage());
+    QImage originalImg = Converter::MatToQImge(imageManager.getOriginalImage());
     displayWindow = new DisplayImage(this);
     displayWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(displayWindow, &QObject::destroyed, this, [this]() {displayWindow = nullptr;});
-    displayWindow->setImage(image);
-    connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
     if(!ui->DisplyaFolderPathField->text().isEmpty()){
         displayWindow->setSaveEnable(true);
     }
+    displayWindow->setImages(processedImg, originalImg);
+    connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
     displayWindow->show();
 }
 

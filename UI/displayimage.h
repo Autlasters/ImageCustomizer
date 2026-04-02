@@ -14,21 +14,28 @@ class DisplayImage : public QDialog {
 private:
     Ui::DisplayImage *ui;
     SaveImage *saveWinodw = nullptr;
-    QImage image;
+    QImage processedImage;
+    QImage originalImage;
     QGraphicsScene *scene = nullptr;
     QGraphicsPixmapItem *pixmapItem = nullptr;
+    bool savePermission;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
-    void setImage(const QImage& image);
+    void setImages(const QImage& processedImage, const QImage& originalImage);
+    void displayProcessedImage();
+    void displayOriginalImage();
     void resizeEvent(QResizeEvent * event);
     void showEvent(QShowEvent *event);
     void setSaveEnable(bool permission);
     ~DisplayImage();
 public slots:
     void callSave();
-    void callClose(); 
+    void callClose();
+    void callProcessedImage();
+    void callOriginalImage();
 signals:
     void saveRequest(const QString& name, const QImage& image);
+    void imagesLoaded();
 };
 
 #endif // DISPLAYIMAGE_H

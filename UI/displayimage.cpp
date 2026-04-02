@@ -11,20 +11,37 @@ DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::Display
 
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
+    connect(ui->displayProcessedImageButton, &QPushButton::clicked, this, &DisplayImage::callProcessedImage);
+    connect(ui->displayOriginalImageButton, &QPushButton::clicked, this, &DisplayImage::callOriginalImage);
+    connect(this, &DisplayImage::imagesLoaded, this, &DisplayImage::callProcessedImage);
 }
 
-void DisplayImage::setImage(const QImage &image) {
-    if(image.isNull()){
+void DisplayImage::setImages(const QImage& processedImage, const QImage& originalImage) {
+    if(processedImage.isNull() || originalImage.isNull()){
         scene->clear();
         return;
     }
-    this->image = image;
-    QPixmap pixmap = QPixmap::fromImage(this->image);
+    this->processedImage = processedImage;
+    this->originalImage = originalImage;
+    emit imagesLoaded();
+}
+
+void DisplayImage::displayProcessedImage(){
+    QPixmap pixmap = QPixmap::fromImage(processedImage);
     scene->clear();
     pixmapItem = scene->addPixmap(pixmap);
     scene->setSceneRect(pixmapItem->boundingRect());
     ui->graphicsView->setScene(scene);
 }
+
+void DisplayImage::displayOriginalImage(){
+    QPixmap pixmap = QPixmap::fromImage(originalImage);
+    scene->clear();
+    pixmapItem = scene->addPixmap(pixmap);
+    scene->setSceneRect(pixmapItem->boundingRect());
+    ui->graphicsView->setScene(scene);
+}
+
 
 void DisplayImage::resizeEvent(QResizeEvent *event) {
     QDialog::resizeEvent(event);
@@ -41,7 +58,7 @@ void DisplayImage::showEvent(QShowEvent *event) {
 }
 
 void DisplayImage::setSaveEnable(bool permission) {
-    ui->saveButton->setEnabled(permission);
+    savePermission = permission;
 }
 
 DisplayImage::~DisplayImage() {
@@ -50,8 +67,22 @@ DisplayImage::~DisplayImage() {
 
 void DisplayImage::callSave() {
     saveWinodw = new SaveImage(this);
-    connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name) {emit saveRequest(name, this->image);});
+    connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name) {emit saveRequest(name, this->processedImage);});
     saveWinodw->exec();
+}
+
+void DisplayImage::callProcessedImage(){
+    displayProcessedImage();
+    ui->saveButton->setEnabled(savePermission);
+    ui->displayProcessedImageButton->setEnabled(false);
+    ui->displayOriginalImageButton->setEnabled(true);
+}
+
+void DisplayImage::callOriginalImage(){
+    displayOriginalImage();
+    ui->saveButton->setEnabled(false);
+    ui->displayOriginalImageButton->setEnabled(false);
+    ui->displayProcessedImageButton->setEnabled(true);
 }
 
 void DisplayImage::callClose() {
