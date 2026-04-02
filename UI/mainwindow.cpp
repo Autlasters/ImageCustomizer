@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
     ui->processButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
-    ui->DisplyaFolderPathField->setReadOnly(true);
+    ui->DisplayFolderPathField->setReadOnly(true);
+    ui->DisplayFolderPathField->setPlaceholderText("Click Search to chose the folder for the images saving");
     ui->filtersList->addItems(FiltersCollector::getAllFilters());
 
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callExit);
@@ -17,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
 
-    dragAndDropEvent = ui->dragAndDropFiled;
-    connect(ui->dragAndDropFiled, &CustomView::imageDropped, this, &MainWindow::checkDragAndDrop);
+    dragAndDropEvent = ui->dragAndDropArea;
+    connect(ui->dragAndDropArea, &CustomView::imageDropped, this, &MainWindow::checkDragAndDrop);
     connect(dragAndDropEvent, &CustomView::imageDropped, this, &MainWindow::imageDropped);
 }
 
@@ -28,8 +29,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::callSearch() {
     QString folderPath = QFileDialog::getExistingDirectory(this, tr("Set folder"), "C://", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    ui->DisplyaFolderPathField->clear();
-    ui->DisplyaFolderPathField->setText(folderPath);
+    ui->DisplayFolderPathField->clear();
+    ui->DisplayFolderPathField->setText(folderPath);
 }
 
 void MainWindow::callProcess() {
@@ -43,7 +44,7 @@ void MainWindow::callProcess() {
     displayWindow = new DisplayImage(this);
     displayWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(displayWindow, &QObject::destroyed, this, [this]() {displayWindow = nullptr;});
-    if(!ui->DisplyaFolderPathField->text().isEmpty()){
+    if(!ui->DisplayFolderPathField->text().isEmpty()){
         displayWindow->setSaveEnable(true);
     }
     displayWindow->setImages(processedImg, originalImg);
@@ -53,8 +54,6 @@ void MainWindow::callProcess() {
 
 void MainWindow::callClear() {
     dragAndDropEvent->clearScene();
-    ui->dragAndDropFiled->resetTransform();
-    ui->dragAndDropFiled->viewport()->update();
     ui->processButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
     imageManager.resetOriginalImage();
@@ -74,12 +73,12 @@ void MainWindow::imageDropped(const QString &path) {
     QImage image = Converter::MatToQImge(mat);
     QPixmap pixmap = QPixmap::fromImage(image);
     dragAndDropEvent->getScene()->addPixmap(pixmap);
-    ui->dragAndDropFiled->setScene(dragAndDropEvent->getScene());
+    ui->dragAndDropArea->setScene(dragAndDropEvent->getScene());
 }
 
 void MainWindow::saveImage(const QString &name, const QImage &image) {
-    if(ui->DisplyaFolderPathField->text().isEmpty()) return;
-    if(!userImageIO.setPath(ui->DisplyaFolderPathField->text())) return;
+    if(ui->DisplayFolderPathField->text().isEmpty()) return;
+    if(!userImageIO.setPath(ui->DisplayFolderPathField->text())) return;
     cv::Mat mat = Converter::QImageToMat(image);
     userImageIO.saveImage(mat, name);
 }

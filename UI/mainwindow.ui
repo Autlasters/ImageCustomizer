@@ -26,7 +26,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="CustomView" name="dragAndDropFiled">
+         <widget class="CustomView" name="dragAndDropArea">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -59,7 +59,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="DisplyaFolderPathField"/>
+         <widget class="QLineEdit" name="DisplayFolderPathField"/>
         </item>
         <item>
          <widget class="QPushButton" name="setFolderButton">

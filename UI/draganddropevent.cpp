@@ -5,6 +5,7 @@ CustomView::CustomView(QWidget *parent): QGraphicsView(parent) {
     scene = new QGraphicsScene(this);
     setScene(scene);
     viewport()->installEventFilter(this);
+    showPlaceHolder();
 }
 
 void CustomView::dragEnterEvent(QDragEnterEvent *event) {
@@ -55,8 +56,26 @@ QGraphicsScene *CustomView::getScene() const {
 }
 
 void CustomView::clearScene() {
-    if(scene){
-        scene->clear();
-        resetTransform();
+    if(!scene){
+        return;
     }
+    scene->clear();
+    resetTransform();
+    showPlaceHolder();
+    scene->setSceneRect(scene->itemsBoundingRect());
+    centerOn(scene->sceneRect().center());
+    viewport()->update();
+}
+
+void CustomView::showPlaceHolder() {
+    QGraphicsTextItem *text = scene->addText("Drag&Drop Image Here");
+    QFont font;
+    font.setPointSize(16);
+    font.setBold(true);
+    text->setFont(font);
+    QPoint point = viewport()->rect().center();
+    QPointF alignment = mapToScene(point);
+    QRectF textRect = text->boundingRect();
+    text->setPos(alignment.x() - textRect.width() / 2, alignment.y() - textRect.height() / 2);
+    scene->setSceneRect(scene->itemsBoundingRect());
 }

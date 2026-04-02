@@ -23,6 +23,7 @@ public:
     void dropEvent(QDropEvent *event);
     QGraphicsScene *getScene() const;
     void clearScene();
+    void showPlaceHolder();
 signals:
     void imageDropped(const QString& path);
 };
