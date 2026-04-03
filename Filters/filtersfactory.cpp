@@ -7,5 +7,17 @@ std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     if(filterName == "Blur"){
         return std::make_unique<BlurFilter>();
     }
+    if(filterName == "Bright"){
+        return std::make_unique<BrightFilter>();
+    }
+    if(filterName == "Warm"){
+        return std::make_unique<WarmFilter>();
+    }
+    if(filterName == "Cold"){
+        return std::make_unique<ColdFilter>();
+    }
+    if(filterName == "Sharp"){
+        return std::make_unique<SharpFilter>();
+    }
     return nullptr;
 }

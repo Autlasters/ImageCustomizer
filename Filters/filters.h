@@ -11,18 +11,47 @@ public:
     virtual QString getFilterName() const = 0;
 };
 
+//-----------------------------------------------------Black&White Filter-----------------------------------------------------
 class BlackAndWhiteFilter: public Filter {
 public:
     void apply(cv::Mat& image) override;
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Blur Filter-----------------------------------------------------
 class BlurFilter: public Filter {
 public:
     void apply(cv::Mat& image) override;
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Bright Filter-----------------------------------------------------
+class BrightFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------Warm Filter-----------------------------------------------------
+class WarmFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------Cold Filter-----------------------------------------------------
+class ColdFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------Sharp Filter-----------------------------------------------------
+class SharpFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
 
 
 #endif // FILTERS_H
