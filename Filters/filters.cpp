@@ -9,7 +9,7 @@ void BlackAndWhiteFilter::apply(cv::Mat& image) {
 
     //convert the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
     cv::cvtColor(image, result, cv::COLOR_BGR2GRAY);
-    //convert the image colors forom GRAY format to BGR one channel
+    //convert the image colors forom GRAY one channel format to BGR 3-channels
     cv::cvtColor(result, image, cv::COLOR_GRAY2BGR);
 }
 
@@ -183,8 +183,73 @@ QString SharpFilter::getFilterName() const{
     return "Sharp";
 }
 
+//-----------------------------------------------------Sepia Filter-----------------------------------------------------
+void SepiaFilter::apply(cv::Mat& image){
+    if(image.empty()){
+        return;
+    }
+    cv::Mat result = image.clone();
 
+    //the loop for accessing each pixel of the image and transforming it
+    for(int y = 0; y < image.rows; ++y){
+        for(int x = 0; x < image.cols; ++x){
 
+            //access to the particular pixel
+            cv::Vec3b pixel = image.at<cv::Vec3b>(y, x);
 
+            //access to each color of the pixel (BGR order)
+            uchar blue = pixel[0];
+            uchar green = pixel[1];
+            uchar red = pixel[2];
 
+            //transform each color
+            uchar newBlue = cv::saturate_cast<uchar>((0.131 * blue) + (0.534 * green) + (0.272 * red));
+            uchar newGreen = cv::saturate_cast<uchar>((0.168 * blue) +  (0.686 * green) + (0.349 * red));
+            uchar newRed= cv::saturate_cast<uchar>((0.189 * blue) + (0.769 * green) + (0.393 * red));
 
+            //replacing the colors of each pixel with computed values
+            result.at<cv::Vec3b>(y, x) = cv::Vec3b(newBlue, newGreen, newRed);
+        }
+    }
+    image = result;
+}
+
+QString SepiaFilter::getFilterName() const{
+    return "Sepia";
+}
+
+//-----------------------------------------------------Edge Detection Filter-----------------------------------------------------
+void EdgeDetectionFilter::apply(cv::Mat& image){
+    if (image.empty()){
+        return;
+    }
+    cv::Mat grayScaled;
+
+    //convert the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
+    cv::cvtColor(image, grayScaled, cv::COLOR_BGR2GRAY);
+
+    cv::Mat Sobelx, Sobely, Gradient;
+
+    /*applies Sobel operator horizontaly: CV_64F - allows negative gradient, 1 - order of the derivative in the x-direction,
+    0 - order of the derivative in the y-direction 3 - size of the extended Sobel kernel*/
+    cv::Sobel(grayScaled, Sobelx, CV_64F, 1, 0, 3);
+
+    /*applies Sobel operator verticaly: CV_64F - allows negative gradient, 1 - order of the derivative in the x-direction,
+    0 - order of the derivative in the y-direction 3 - size of the extended Sobel kernel*/
+    cv::Sobel(grayScaled, Sobely, CV_64F, 0, 1, 3);
+
+    //compute the gradient magnitude
+    cv::magnitude(Sobelx, Sobely, Gradient);
+    cv::Mat result;
+
+    //convert the mathematical result into the suitable image form: uint8 [0-255]
+    cv::convertScaleAbs(Gradient, result);
+
+    //convert the image colors forom GRAY one channel format to BGR 3-channels
+    cv::cvtColor(result, result, cv::COLOR_GRAY2BGR);
+    image = result;
+}
+
+QString EdgeDetectionFilter::getFilterName() const{
+    return "EdgeDetection";
+}

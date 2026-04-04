@@ -53,5 +53,18 @@ public:
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Sepia Filter-----------------------------------------------------
+class SepiaFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------Edge Detection Filter-----------------------------------------------------
+class EdgeDetectionFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
 
 #endif // FILTERS_H

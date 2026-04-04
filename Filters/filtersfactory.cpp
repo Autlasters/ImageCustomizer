@@ -19,5 +19,11 @@ std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     if(filterName == "Sharp"){
         return std::make_unique<SharpFilter>();
     }
+    if(filterName == "Sepia"){
+        return std::make_unique<SepiaFilter>();
+    }
+    if(filterName == "Edge Detection"){
+        return std::make_unique<EdgeDetectionFilter>();
+    }
     return nullptr;
 }
