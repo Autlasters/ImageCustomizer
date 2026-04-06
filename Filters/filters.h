@@ -67,4 +67,11 @@ public:
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Negative Filter-----------------------------------------------------
+class NegativeFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
 #endif // FILTERS_H

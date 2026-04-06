@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QImage>
 #include <QGraphicsScene>
-
 #include "saveimage.h"
 
 namespace Ui { class DisplayImage; }

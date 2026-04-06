@@ -253,3 +253,27 @@ void EdgeDetectionFilter::apply(cv::Mat& image){
 QString EdgeDetectionFilter::getFilterName() const{
     return "EdgeDetection";
 }
+
+//-----------------------------------------------------Negative Filter-----------------------------------------------------
+void NegativeFilter::apply(cv::Mat& image){
+    if (image.empty()){
+        return;
+    }
+
+    cv::Mat result = image.clone();
+    for(int y = 0; y < image.rows; ++y){
+        for(int x = 0; x < image.cols; ++x){
+            cv::Vec3b pixel = image.at<cv::Vec3b>(y, x);
+            pixel[0] = 255 - pixel[0];
+            pixel[1] = 255 - pixel[1];
+            pixel[2] = 255 - pixel[2];
+
+            result.at<cv::Vec3b>(y, x) = pixel;
+        }
+    }
+    image = result;
+}
+
+QString NegativeFilter::getFilterName() const{
+    return "Negative";
+}

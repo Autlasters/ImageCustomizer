@@ -25,5 +25,9 @@ std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     if(filterName == "Edge Detection"){
         return std::make_unique<EdgeDetectionFilter>();
     }
+    if(filterName == "Negative"){
+        return std::make_unique<NegativeFilter>();
+    }
+
     return nullptr;
 }

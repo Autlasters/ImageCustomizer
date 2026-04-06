@@ -6,11 +6,11 @@
 
 class ImageIO {
 private:
-    QString path;
+    QString folderPath;
 public:
-    bool setPath(const QString& path);
+    bool setfolderPath(const QString& folderPath);
     bool saveImage(const cv::Mat& image, const QString& imageName);
-    QString getPathToImage(const QString& imageName) const ;
+    QString getPathToImage(const QString& imageName) const;
 };
 
 #endif // IMAGEIO_H

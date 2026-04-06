@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QDebug>
+#include<QSettings>
 #include "opencv2/core/core.hpp"
 
 #include "imagemanager.h"
@@ -23,6 +23,7 @@ private:
     ImageIO histroyImageIO;
     CustomView *dragAndDropEvent = nullptr;
     DisplayImage *displayWindow = nullptr;
+    QSettings settings;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
