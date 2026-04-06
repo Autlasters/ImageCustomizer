@@ -18,14 +18,16 @@ private:
     QGraphicsScene *scene = nullptr;
     QGraphicsPixmapItem *pixmapItem = nullptr;
     bool savePermission;
+protected:
+    void resizeEvent(QResizeEvent * event) override;
+    void showEvent(QShowEvent *event) override;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
     void setImages(const QImage& processedImage, const QImage& originalImage);
     void displayProcessedImage();
     void displayOriginalImage();
-    void resizeEvent(QResizeEvent * event);
-    void showEvent(QShowEvent *event);
     void setSaveEnable(bool permission);
+    void setScale();
     ~DisplayImage();
 public slots:
     void callSave();

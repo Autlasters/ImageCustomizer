@@ -27,7 +27,8 @@ SOURCES += \
     UI/main.cpp \
     UI/mainwindow.cpp \
     UI/displayimage.cpp \
-    UI/saveimage.cpp
+    UI/saveimage.cpp \
+    UI/wheelevent.cpp
 
 HEADERS += \
     Converter/converter.h \
@@ -39,7 +40,8 @@ HEADERS += \
     UI/draganddropevent.h \
     UI/mainwindow.h \
     UI/displayimage.h \
-    UI/saveimage.h
+    UI/saveimage.h \
+    UI/wheelevent.h
 
 FORMS += \
     UI/mainwindow.ui \

@@ -13,14 +13,15 @@
 
 class CustomView: public QGraphicsView {
     Q_OBJECT
-protected:
+private:
     QGraphicsScene *scene = nullptr;
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 public:
     explicit CustomView(QWidget *parent = nullptr);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragLeaveEvent(QDragLeaveEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent *event);
     QGraphicsScene *getScene() const;
     void clearScene();
     void showPlaceHolder();

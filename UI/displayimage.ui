@@ -28,7 +28,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QGraphicsView" name="graphicsView">
+        <widget class="WheelEvent" name="graphicsView">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -175,6 +175,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WheelEvent</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">wheelevent.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

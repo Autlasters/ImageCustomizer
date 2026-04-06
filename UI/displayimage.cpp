@@ -47,6 +47,7 @@ void DisplayImage::resizeEvent(QResizeEvent *event) {
     QDialog::resizeEvent(event);
     if (pixmapItem) {
         ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
+        setScale();
     }
 }
 
@@ -54,6 +55,7 @@ void DisplayImage::showEvent(QShowEvent *event) {
     QDialog::showEvent(event);
     if (pixmapItem) {
         ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
+        setScale();
     }
 }
 
@@ -87,4 +89,16 @@ void DisplayImage::callOriginalImage(){
 
 void DisplayImage::callClose() {
     close();
+}
+
+void DisplayImage::setScale() {
+    QRectF sceneRect = ui->graphicsView->sceneRect();
+    QRectF viewRect = ui->graphicsView->viewport()->rect();
+
+    qreal sx = viewRect.width() / sceneRect.width();
+    qreal sy = viewRect.height() / sceneRect.height();
+
+    qreal minScale = qMin(sx, sy);
+
+    ui->graphicsView->setMinimalScale(minScale);
 }
