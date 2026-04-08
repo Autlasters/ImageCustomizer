@@ -10,7 +10,7 @@ QImage Converter::MatToQImge(const cv::Mat& image){
         return QImage(temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888).copy();
     }
     if(image.type() == CV_8UC1){
-        return QImage(image.data, image.cols, image.rows, image.step, QImage::Format_RGB888).copy();
+        return QImage(image.data, image.cols, image.rows, image.step, QImage::Format_Grayscale8).copy();
     }
     return QImage();
 }

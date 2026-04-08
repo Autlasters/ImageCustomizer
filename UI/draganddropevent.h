@@ -22,7 +22,6 @@ protected:
     void dropEvent(QDropEvent *event) override;
 public:
     explicit CustomView(QWidget *parent = nullptr);
-    QGraphicsScene *getScene() const;
     void clearScene();
     void showPlaceHolder();
 signals:

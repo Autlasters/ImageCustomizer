@@ -51,10 +51,6 @@ void CustomView::dropEvent(QDropEvent *event) {
     }
 }
 
-QGraphicsScene *CustomView::getScene() const {
-    return scene;
-}
-
 void CustomView::clearScene() {
     if(!scene){
         return;

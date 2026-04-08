@@ -56,7 +56,6 @@ void WheelEvent::mouseMoveEvent(QMouseEvent *event) {
 void WheelEvent::setMinimalScale(qreal scale) {
     minimalScale = scale;
     currentScale = scale;
-
 }
 
 

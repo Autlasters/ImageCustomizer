@@ -1,4 +1,5 @@
 #include "filters.h"
+#include "QDebug"
 
 //-----------------------------------------------------Black&White Filter-----------------------------------------------------
 void BlackAndWhiteFilter::apply(cv::Mat& image) {
@@ -165,6 +166,7 @@ void SharpFilter::apply(cv::Mat& image){
     if(image.empty()){
         return;
     }
+
     cv::Mat result;
 
     /*convolution kernel matrix - Preserves the center pixel with a positive weight and

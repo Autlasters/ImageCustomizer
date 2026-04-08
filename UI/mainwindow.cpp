@@ -79,11 +79,6 @@ void MainWindow::imageDropped(const QString &path) {
     if(!imageManager.loadImage(path)){
         return;
     }
-    cv::Mat mat = imageManager.getProcessedImage();
-    QImage image = Converter::MatToQImge(mat);
-    QPixmap pixmap = QPixmap::fromImage(image);
-    dragAndDropEvent->getScene()->addPixmap(pixmap);
-    ui->dragAndDropArea->setScene(dragAndDropEvent->getScene());
 }
 
 void MainWindow::saveImage(const QString &name, const QImage &image) {
