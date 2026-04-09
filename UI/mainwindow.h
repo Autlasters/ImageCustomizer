@@ -21,7 +21,7 @@ private:
     ImageManager imageManager;
     ImageIO userImageIO;
     ImageIO histroyImageIO;
-    CustomView *dragAndDropEvent = nullptr;
+    CustomView *view = nullptr;
     DisplayImage *displayWindow = nullptr;
     QSettings settings;
 public:

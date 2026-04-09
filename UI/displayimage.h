@@ -3,8 +3,8 @@
 
 #include <QDialog>
 #include <QImage>
-#include <QGraphicsScene>
 #include "saveimage.h"
+#include "wheelevent.h"
 
 namespace Ui { class DisplayImage; }
 
@@ -13,14 +13,10 @@ class DisplayImage : public QDialog {
 private:
     Ui::DisplayImage *ui;
     SaveImage *saveWinodw = nullptr;
+    WheelEvent *view = nullptr;
     QImage processedImage;
     QImage originalImage;
-    QGraphicsScene *scene = nullptr;
-    QGraphicsPixmapItem *pixmapItem = nullptr;
     bool savePermission;
-protected:
-    void resizeEvent(QResizeEvent * event) override;
-    void showEvent(QShowEvent *event) override;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
     void setImages(const QImage& processedImage, const QImage& originalImage);

@@ -24,9 +24,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         ui->DisplayFolderPathField->setText(savingFolderPath);
     }
 
-    dragAndDropEvent = ui->dragAndDropArea;
+    view = ui->dragAndDropArea;
     connect(ui->dragAndDropArea, &CustomView::imageDropped, this, &MainWindow::checkDragAndDrop);
-    connect(dragAndDropEvent, &CustomView::imageDropped, this, &MainWindow::imageDropped);
+    connect(view, &CustomView::imageDropped, this, &MainWindow::imageDropped);
 }
 
 MainWindow::~MainWindow() {
@@ -63,7 +63,7 @@ void MainWindow::callProcess() {
 }
 
 void MainWindow::callClear() {
-    dragAndDropEvent->clearScene();
+    view->clearScene();
     ui->processButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
     imageManager.resetOriginalImage();

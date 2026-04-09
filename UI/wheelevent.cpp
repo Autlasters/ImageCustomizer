@@ -1,9 +1,10 @@
 #include <QScrollBar>
 #include "wheelevent.h"
 
-WheelEvent::WheelEvent(QWidget *parent): QGraphicsView(parent) {
+WheelEvent::WheelEvent(QWidget *parent): QGraphicsView(parent), scene(new QGraphicsScene(this)) {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setScene(scene);
 }
 
 void WheelEvent::wheelEvent(QWheelEvent *event){
@@ -41,7 +42,7 @@ void WheelEvent::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void WheelEvent::mouseMoveEvent(QMouseEvent *event) {
-    if (transform().m11() <= minimalScale){
+    if (currentScale <= minimalScale){
         return;
     }
     if(allowMoving){
@@ -53,9 +54,50 @@ void WheelEvent::mouseMoveEvent(QMouseEvent *event) {
     QGraphicsView::mouseMoveEvent(event);
 }
 
-void WheelEvent::setMinimalScale(qreal scale) {
-    minimalScale = scale;
-    currentScale = scale;
+void WheelEvent::resizeEvent(QResizeEvent *event) {
+    QGraphicsView::resizeEvent(event);
+    if(!scene || scene->items().isEmpty()){
+        return;
+    }
+    setMinimalScale();
+}
+
+void WheelEvent::showEvent(QShowEvent *event) {
+    QGraphicsView::showEvent(event);
+    if(!scene || scene->items().isEmpty()){
+        return;
+    }
+    setMinimalScale();
+}
+
+void WheelEvent::setMinimalScale() {
+    QRectF sceneRect = scene->sceneRect();
+    QRectF viewRect = viewport()->rect();
+
+    qreal sx = viewRect.width() / sceneRect.width();
+    qreal sy = viewRect.height() / sceneRect.height();
+
+    minimalScale = qMin(sx, sy);
+    resetTransform();
+    scale(minimalScale, minimalScale);
+    currentScale = minimalScale;
+}
+
+void WheelEvent::setImage(const QImage &image) {
+    QPixmap pixmap = QPixmap::fromImage(image);
+    scene->clear();
+    QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
+    scene->setSceneRect(item->boundingRect());
+}
+
+void WheelEvent::clearScene() {
+    if(!scene){
+        return;
+    }
+    scene->clear();
+    scene->setSceneRect(scene->itemsBoundingRect());
+    centerOn(scene->sceneRect().center());
+    viewport()->update();
 }
 
 

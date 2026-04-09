@@ -3,22 +3,21 @@
 #include "displayimage.h"
 #include "ui_displayimage.h"
 
-DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), scene(new QGraphicsScene(this)) {
+DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage) {
     ui->setupUi(this);
-    ui->graphicsView->setScene(scene);
     ui->saveButton->setEnabled(false);
-    ui->graphicsView->setAlignment(Qt::AlignCenter);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
     connect(ui->displayProcessedImageButton, &QPushButton::clicked, this, &DisplayImage::callProcessedImage);
     connect(ui->displayOriginalImageButton, &QPushButton::clicked, this, &DisplayImage::callOriginalImage);
     connect(this, &DisplayImage::imagesLoaded, this, &DisplayImage::callProcessedImage);
+    view = ui->displayArea;
 }
 
 void DisplayImage::setImages(const QImage& processedImage, const QImage& originalImage) {
     if(processedImage.isNull() || originalImage.isNull()){
-        scene->clear();
+        view->clearScene();
         return;
     }
     this->processedImage = processedImage;
@@ -27,36 +26,11 @@ void DisplayImage::setImages(const QImage& processedImage, const QImage& origina
 }
 
 void DisplayImage::displayProcessedImage(){
-    QPixmap pixmap = QPixmap::fromImage(processedImage);
-    scene->clear();
-    pixmapItem = scene->addPixmap(pixmap);
-    scene->setSceneRect(pixmapItem->boundingRect());
-    ui->graphicsView->setScene(scene);
+    view->setImage(processedImage);
 }
 
 void DisplayImage::displayOriginalImage(){
-    QPixmap pixmap = QPixmap::fromImage(originalImage);
-    scene->clear();
-    pixmapItem = scene->addPixmap(pixmap);
-    scene->setSceneRect(pixmapItem->boundingRect());
-    ui->graphicsView->setScene(scene);
-}
-
-
-void DisplayImage::resizeEvent(QResizeEvent *event) {
-    QDialog::resizeEvent(event);
-    if (pixmapItem) {
-        ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
-        setScale();
-    }
-}
-
-void DisplayImage::showEvent(QShowEvent *event) {
-    QDialog::showEvent(event);
-    if (pixmapItem) {
-        ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
-        setScale();
-    }
+    view->setImage(originalImage);
 }
 
 void DisplayImage::setSaveEnable(bool permission) {
@@ -91,14 +65,3 @@ void DisplayImage::callClose() {
     close();
 }
 
-void DisplayImage::setScale() {
-    QRectF sceneRect = ui->graphicsView->sceneRect();
-    QRectF viewRect = ui->graphicsView->viewport()->rect();
-
-    qreal sx = viewRect.width() / sceneRect.width();
-    qreal sy = viewRect.height() / sceneRect.height();
-
-    qreal minScale = qMin(sx, sy);
-
-    ui->graphicsView->setMinimalScale(minScale);
-}

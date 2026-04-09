@@ -1,8 +1,7 @@
 #include "draganddropevent.h"
 
-CustomView::CustomView(QWidget *parent): QGraphicsView(parent) {
+CustomView::CustomView(QWidget *parent): QGraphicsView(parent), scene(new QGraphicsScene(this)) {
     setAcceptDrops(true);
-    scene = new QGraphicsScene(this);
     setScene(scene);
     viewport()->installEventFilter(this);
     showPlaceHolder();
