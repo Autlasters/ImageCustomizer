@@ -74,4 +74,11 @@ public:
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Pencil Sketch Filter-----------------------------------------------------
+class PencilSketchFilter: public Filter {
+public:
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
 #endif // FILTERS_H

@@ -1,5 +1,4 @@
 #include "filters.h"
-#include "QDebug"
 
 //-----------------------------------------------------Black&White Filter-----------------------------------------------------
 void BlackAndWhiteFilter::apply(cv::Mat& image) {
@@ -8,9 +7,9 @@ void BlackAndWhiteFilter::apply(cv::Mat& image) {
     }
     cv::Mat result;
 
-    //convert the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
+    //converts the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
     cv::cvtColor(image, result, cv::COLOR_BGR2GRAY);
-    //convert the image colors forom GRAY one channel format to BGR 3-channels
+    //converts the image colors forom GRAY one channel format to BGR 3-channels
     cv::cvtColor(result, image, cv::COLOR_GRAY2BGR);
 }
 
@@ -24,7 +23,7 @@ void BlurFilter::apply(cv::Mat& image){
         return;
     }
     cv::Mat result;
-    /*apply the blure effect to the image, cv::Size(5,5) - size of the Karnel matrix, 3 - gaussian kernel standard deviation in x direction
+    /*applys the blure effect to the image, cv::Size(5,5) - size of the Kernel matrix, 3 - Gaussian kernel standard deviation in x direction
     for the bigger coeffitient, the stronger the blur effect*/
     cv::GaussianBlur(image, result, cv::Size(5,5), 3);
 
@@ -41,9 +40,10 @@ void BrightFilter::apply(cv::Mat& image){
         return;
     }
     cv::Mat result;
-    double alpha = 1.3;
-    int beta = 40;
-    image.convertTo(result, -1, alpha, beta);
+
+    /*increases the brigtness and the contrast of the image, -1 - the desired output matrix, -1 means that output matrix will have the same type
+    with the original one, 1.3 - the brigtness value alpha (a>0), 40 - the contrast value beta*/
+    image.convertTo(result, -1, 1.3, 40);
     image = result;
 }
 
@@ -57,7 +57,7 @@ void WarmFilter::apply(cv::Mat& image){
         return;
     }
 
-    //create two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
+    //creates two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
     cv::Mat increaseLUT(1, 256, CV_8UC1);
     cv::Mat decreaseLUT(1, 256, CV_8UC1);
 
@@ -73,18 +73,18 @@ void WarmFilter::apply(cv::Mat& image){
     //splits the matrix to three chanels BLUE, GREEN, RED (BGR)
     cv::split(image, channels);
 
-    //decrese the BLUE channel brightness (LUT - Look Up Table)
+    //decreses the BLUE channel brightness (LUT - Look Up Table)
     cv::LUT(channels[0], decreaseLUT, channels[0]);
 
-    //increase the RED channel brightness
+    //increases the RED channel brightness
     cv::LUT(channels[2], increaseLUT, channels[2]);
 
-    //Connect channel together
+    //Connects channel together
     cv::merge(channels, image);
 
     cv::Mat hsv;
 
-    //convert the image colors forom BGR format to HSV (Hue, Saturation, Value)
+    //converts the image colors forom BGR format to HSV (Hue, Saturation, Value)
     cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
 
     std::vector<cv::Mat> hsvChannels;
@@ -92,13 +92,13 @@ void WarmFilter::apply(cv::Mat& image){
     //splits the matrix to three chanels HUE, SATURATION, VALUE (HSV)
     cv::split(hsv, hsvChannels);
 
-    //increase the Saturation channel
+    //increases the Saturation channel
     cv::LUT(channels[1], increaseLUT, channels[1]);
 
-    //Connect channel together
+    //Connects channel together
     cv::merge(hsvChannels, hsv);
 
-    //convert the image colors forom HSV format to BGR
+    //converts the image colors forom HSV format to BGR
     cv::cvtColor(hsv, image, cv::COLOR_HSV2BGR);
 }
 
@@ -112,7 +112,7 @@ void ColdFilter::apply(cv::Mat& image){
         return;
     }
 
-    //create two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
+    //creates two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
     cv::Mat increaseLUT(1, 256, CV_8UC1);
     cv::Mat decreaseLUT(1, 256, CV_8UC1);
 
@@ -128,18 +128,18 @@ void ColdFilter::apply(cv::Mat& image){
     //splits the matrix to three chanels BLUE, GREEN, RED (BGR)
     cv::split(image, channels);
 
-    //decrese the BLUE channel brightness (LUT - Look Up Table)
+    //decreses the BLUE channel brightness (LUT - Look Up Table)
     cv::LUT(channels[0], increaseLUT, channels[0]);
 
-    //increase the RED channel brightness
+    //increases the RED channel brightness
     cv::LUT(channels[2], decreaseLUT, channels[2]);
 
-    //Connect channel together
+    //Connects channel together
     cv::merge(channels, image);
 
     cv::Mat hsv;
 
-    //convert the image colors forom BGR format to HSV (Hue, Saturation, Value)
+    //converts the image colors forom BGR format to HSV (Hue, Saturation, Value)
     cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
 
     std::vector<cv::Mat> hsvChannels;
@@ -147,13 +147,13 @@ void ColdFilter::apply(cv::Mat& image){
     //splits the matrix to three chanels HUE, SATURATION, VALUE (HSV)
     cv::split(hsv, hsvChannels);
 
-    //increase the Saturation channel
+    //increases the Saturation channel
     cv::LUT(channels[1], decreaseLUT, channels[1]);
 
-    //Connect channel together
+    //Connects channel together
     cv::merge(hsvChannels, hsv);
 
-    //convert the image colors forom HSV format to BGR
+    //converts the image colors forom HSV format to BGR
     cv::cvtColor(hsv, image, cv::COLOR_HSV2BGR);
 }
 
@@ -169,7 +169,7 @@ void SharpFilter::apply(cv::Mat& image){
 
     cv::Mat result;
 
-    /*convolution kernel matrix - Preserves the center pixel with a positive weight and
+    /*convolution Kernel matrix - Preserves the center pixel with a positive weight and
     subtracts the influence of the surrounding pixels using negative weights.*/
     cv::Mat kernel = (cv::Mat_<float>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
 
@@ -209,7 +209,7 @@ void SepiaFilter::apply(cv::Mat& image){
             uchar newGreen = cv::saturate_cast<uchar>((0.168 * blue) +  (0.686 * green) + (0.349 * red));
             uchar newRed= cv::saturate_cast<uchar>((0.189 * blue) + (0.769 * green) + (0.393 * red));
 
-            //replacing the colors of each pixel with computed values
+            //replaces the colors of each pixel with computed values
             result.at<cv::Vec3b>(y, x) = cv::Vec3b(newBlue, newGreen, newRed);
         }
     }
@@ -227,7 +227,7 @@ void EdgeDetectionFilter::apply(cv::Mat& image){
     }
     cv::Mat grayScaled;
 
-    //convert the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
+    //converts the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
     cv::cvtColor(image, grayScaled, cv::COLOR_BGR2GRAY);
 
     cv::Mat Sobelx, Sobely, Gradient;
@@ -240,14 +240,14 @@ void EdgeDetectionFilter::apply(cv::Mat& image){
     0 - order of the derivative in the y-direction 3 - size of the extended Sobel kernel*/
     cv::Sobel(grayScaled, Sobely, CV_64F, 0, 1, 3);
 
-    //compute the gradient magnitude
+    //computes the gradient magnitude
     cv::magnitude(Sobelx, Sobely, Gradient);
     cv::Mat result;
 
-    //convert the mathematical result into the suitable image form: uint8 [0-255]
+    //converts the mathematical result into the suitable image form: uint8 [0-255]
     cv::convertScaleAbs(Gradient, result);
 
-    //convert the image colors forom GRAY one channel format to BGR 3-channels
+    //converts the image colors forom GRAY one channel format to BGR 3-channels
     cv::cvtColor(result, result, cv::COLOR_GRAY2BGR);
     image = result;
 }
@@ -263,13 +263,20 @@ void NegativeFilter::apply(cv::Mat& image){
     }
 
     cv::Mat result = image.clone();
+
+    //the loop for accessing each pixel of the image and transforming it
     for(int y = 0; y < image.rows; ++y){
         for(int x = 0; x < image.cols; ++x){
+
+            //access to the particular pixel
             cv::Vec3b pixel = image.at<cv::Vec3b>(y, x);
+
+            //change the colors of the pixel (BGR order)
             pixel[0] = 255 - pixel[0];
             pixel[1] = 255 - pixel[1];
             pixel[2] = 255 - pixel[2];
 
+            //replaces the initial pixel with the modified pixel
             result.at<cv::Vec3b>(y, x) = pixel;
         }
     }
@@ -279,3 +286,36 @@ void NegativeFilter::apply(cv::Mat& image){
 QString NegativeFilter::getFilterName() const{
     return "Negative";
 }
+
+//-----------------------------------------------------Pencil Sketch Filter-----------------------------------------------------
+void PencilSketchFilter::apply(cv::Mat& image){
+    if (image.empty()){
+        return;
+    }
+
+    cv::Mat greyImage, blurredImage, devideImage, maskedImage, result;
+
+    //converts the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
+    cv::cvtColor(image, greyImage, cv::COLOR_BGR2GRAY);
+
+    /*applys the blure effect to the image, cv::Size(15,15) - size of the Kernel matrix, 0, 0 - Gaussian kernel standard deviation
+    in x and y directions for the bigger coeffitients, the stronger the blur effect*/
+    cv::GaussianBlur(greyImage, blurredImage, cv::Size(15, 15), 0, 0);
+
+    //makes bright areasof the image white, dark areas and edges stay dark.  256 - scale coefficient
+    cv::divide(greyImage, blurredImage, devideImage, 256);
+
+    /*removes weak details from the image and enhance the sketch contrast. 70 - thresh value, 255 - maximum value of the thresholding type,
+    THRESH_BINARY - thresholding type*/
+    cv::threshold(devideImage, maskedImage, 70, 255, cv::THRESH_BINARY);
+
+    //combines threshold mask - maskedImage, with the original sketch - devideImage
+    cv::bitwise_and(maskedImage, devideImage, result);
+
+    image = result;
+}
+
+QString PencilSketchFilter::getFilterName() const{
+    return "Pencil Sketch";
+}
+
