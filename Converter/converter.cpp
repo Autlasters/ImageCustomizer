@@ -19,9 +19,9 @@ cv::Mat Converter::QImageToMat(const QImage& image){
     if(image.isNull()){
         return cv::Mat();
     }
-    QImage qimage = image.convertToFormat(QImage::Format_RGB888);
-    cv::Mat mat (qimage.height(), qimage.width(), CV_8UC3, (void*)qimage.bits(), qimage.bytesPerLine());
+    QImage converted = image.convertToFormat(QImage::Format_RGB888);
+    cv::Mat temp(converted.height(), converted.width(), CV_8UC3, (void*)converted.bits(), converted.bytesPerLine());
     cv::Mat result;
-    cv::cvtColor(mat, result, cv::COLOR_RGB2BGR);
+    cv::cvtColor(temp, result, cv::COLOR_RGB2BGR);
     return result.clone();
 }

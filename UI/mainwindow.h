@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include<QSettings>
+#include <QSettings>
 #include "opencv2/core/core.hpp"
 
 #include "imagemanager.h"
@@ -18,12 +18,12 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 private:
     Ui::MainWindow *ui;
-    ImageManager imageManager;
-    ImageIO userImageIO;
-    ImageIO histroyImageIO;
     CustomView *view = nullptr;
     DisplayImage *displayWindow = nullptr;
+    ImageManager imageManager;
+    ImageIO userImageIO;
     QSettings settings;
+    bool imagesLoaded = false;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -33,7 +33,8 @@ public slots:
     void callClear();
     void callExit();
     void imageDropped(const QString& path);
-    void saveImage(const QString& name, const QImage& image);
-    void checkDragAndDrop(const QString& path);
+    void saveImage(const QString& name, const QString& extension, const QImage& image);
+    void changeButtonsState();
 };
+
 #endif // MAINWINDOW_H

@@ -10,11 +10,11 @@
 class WheelEvent: public QGraphicsView {
     Q_OBJECT
 private:
+    QGraphicsScene *scene = nullptr;
     qreal minimalScale;
     qreal currentScale;
     QPoint lastPosition;
     bool allowMoving = false;
-    QGraphicsScene *scene = nullptr;
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;

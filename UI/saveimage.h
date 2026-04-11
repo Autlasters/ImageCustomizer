@@ -2,6 +2,7 @@
 #define SAVEIMAGE_H
 
 #include <QDialog>
+#include <QStringList>
 
 namespace Ui { class SaveImage; }
 
@@ -10,15 +11,14 @@ class SaveImage : public QDialog {
 private:
     Ui::SaveImage *ui;
 public:
-    explicit SaveImage(QWidget *parent = nullptr);
-    void setSaveEnable(const QString& name);
+    explicit SaveImage(const QStringList& extensions, QWidget *parent = nullptr);
+    void setSaveEnable();
     ~SaveImage();
 public slots:
     void callSave();
     void callCancel();
 signals:
-    void saveConfirmed(const QString name);
-    void saveCanceled();
+    void saveConfirmed(const QString name, const QString extension);
 };
 
 #endif // SAVEIMAGE_H

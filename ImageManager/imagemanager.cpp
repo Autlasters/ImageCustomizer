@@ -1,8 +1,8 @@
+#include <QImage>
+
 #include "imagemanager.h"
 #include "filtersfactory.h"
 #include "converter.h"
-
-#include <QImage>
 
 bool ImageManager::loadImage(const QString& path){
     if(path.isEmpty()){
@@ -21,7 +21,6 @@ bool ImageManager::loadImage(const QString& path){
         return false;
     }
 
-    resetAppliedFiltersList();
     processedImage = originalImage.clone();
     return true;
 }
@@ -35,23 +34,23 @@ void ImageManager::applyFilter(const QString& filterName){
     processedImage = originalImage.clone();
 
     filter->apply(processedImage);
-    appliedFilters << filter->getFilterName();
 }
 
 void ImageManager::resetOriginalImage() {
+    if(originalImage.empty()){
+        return;
+    }
     originalImage.release();
 }
 
 void ImageManager::resetProcessedImage(){
+    if(processedImage.empty()){
+        return;
+    }
     if(originalImage.empty()){
         return;
     }
     processedImage = originalImage.clone();
-    resetAppliedFiltersList();
-}
-
-void ImageManager::resetAppliedFiltersList(){
-    appliedFilters.clear();
 }
 
 const cv::Mat& ImageManager::getOriginalImage() const {
@@ -60,9 +59,5 @@ const cv::Mat& ImageManager::getOriginalImage() const {
 
 const cv::Mat& ImageManager::getProcessedImage() const{
     return processedImage;
-}
-
-const QStringList& ImageManager::getFiltersList() const{
-    return appliedFilters;
 }
 

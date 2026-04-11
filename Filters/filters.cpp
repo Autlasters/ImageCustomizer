@@ -9,8 +9,7 @@ void BlackAndWhiteFilter::apply(cv::Mat& image) {
 
     //converts the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
     cv::cvtColor(image, result, cv::COLOR_BGR2GRAY);
-    //converts the image colors forom GRAY one channel format to BGR 3-channels
-    cv::cvtColor(result, image, cv::COLOR_GRAY2BGR);
+    image = result;
 }
 
 QString BlackAndWhiteFilter::getFilterName() const{
@@ -23,10 +22,10 @@ void BlurFilter::apply(cv::Mat& image){
         return;
     }
     cv::Mat result;
+
     /*applys the blure effect to the image, cv::Size(5,5) - size of the Kernel matrix, 3 - Gaussian kernel standard deviation in x direction
     for the bigger coeffitient, the stronger the blur effect*/
     cv::GaussianBlur(image, result, cv::Size(5,5), 3);
-
     image = result;
 }
 
@@ -56,6 +55,8 @@ void WarmFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
     }
+    cv::Mat hsv;
+    std::vector<cv::Mat> channels, hsvChannels;
 
     //creates two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
     cv::Mat increaseLUT(1, 256, CV_8UC1);
@@ -67,8 +68,6 @@ void WarmFilter::apply(cv::Mat& image){
         increaseLUT.at<uchar>(i) = cv::saturate_cast<uchar>(i*1.2);
         decreaseLUT.at<uchar>(i) = cv::saturate_cast<uchar>(i*0.8);
     }
-
-    std::vector<cv::Mat> channels;
 
     //splits the matrix to three chanels BLUE, GREEN, RED (BGR)
     cv::split(image, channels);
@@ -82,12 +81,8 @@ void WarmFilter::apply(cv::Mat& image){
     //Connects channel together
     cv::merge(channels, image);
 
-    cv::Mat hsv;
-
     //converts the image colors forom BGR format to HSV (Hue, Saturation, Value)
     cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
-
-    std::vector<cv::Mat> hsvChannels;
 
     //splits the matrix to three chanels HUE, SATURATION, VALUE (HSV)
     cv::split(hsv, hsvChannels);
@@ -111,6 +106,8 @@ void ColdFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
     }
+    cv::Mat hsv;
+    std::vector<cv::Mat> channels, hsvChannels;
 
     //creates two tables with 1 row and 256 elemets, where each element can has the value only in range [0, 255]
     cv::Mat increaseLUT(1, 256, CV_8UC1);
@@ -122,8 +119,6 @@ void ColdFilter::apply(cv::Mat& image){
         increaseLUT.at<uchar>(i) = cv::saturate_cast<uchar>(i*1.2);
         decreaseLUT.at<uchar>(i) = cv::saturate_cast<uchar>(i*0.8);
     }
-
-    std::vector<cv::Mat> channels;
 
     //splits the matrix to three chanels BLUE, GREEN, RED (BGR)
     cv::split(image, channels);
@@ -137,12 +132,8 @@ void ColdFilter::apply(cv::Mat& image){
     //Connects channel together
     cv::merge(channels, image);
 
-    cv::Mat hsv;
-
     //converts the image colors forom BGR format to HSV (Hue, Saturation, Value)
     cv::cvtColor(image, hsv, cv::COLOR_BGR2HSV);
-
-    std::vector<cv::Mat> hsvChannels;
 
     //splits the matrix to three chanels HUE, SATURATION, VALUE (HSV)
     cv::split(hsv, hsvChannels);
@@ -166,7 +157,6 @@ void SharpFilter::apply(cv::Mat& image){
     if(image.empty()){
         return;
     }
-
     cv::Mat result;
 
     /*convolution Kernel matrix - Preserves the center pixel with a positive weight and
@@ -177,7 +167,6 @@ void SharpFilter::apply(cv::Mat& image){
     cv::Point(-1, -1) - position of the anchor point within the kernel, 0 - optional value added to each pixel after filtering
     cv::BORDER_DEFAULT - pixel extrapolation method at the border*/
     cv::filter2D(image, result, -1, kernel, cv::Point(-1, -1), 0, cv::BORDER_DEFAULT);
-
     image = result;
 }
 
@@ -199,15 +188,10 @@ void SepiaFilter::apply(cv::Mat& image){
             //access to the particular pixel
             cv::Vec3b pixel = image.at<cv::Vec3b>(y, x);
 
-            //access to each color of the pixel (BGR order)
-            uchar blue = pixel[0];
-            uchar green = pixel[1];
-            uchar red = pixel[2];
-
-            //transform each color
-            uchar newBlue = cv::saturate_cast<uchar>((0.131 * blue) + (0.534 * green) + (0.272 * red));
-            uchar newGreen = cv::saturate_cast<uchar>((0.168 * blue) +  (0.686 * green) + (0.349 * red));
-            uchar newRed= cv::saturate_cast<uchar>((0.189 * blue) + (0.769 * green) + (0.393 * red));
+            //compute the values of each color of the pixel (BGR order)
+            uchar newBlue = cv::saturate_cast<uchar>((0.131 * pixel[0]) + (0.534 * pixel[1]) + (0.272 * pixel[2]));
+            uchar newGreen = cv::saturate_cast<uchar>((0.168 * pixel[0]) +  (0.686 * pixel[1]) + (0.349 * pixel[2]));
+            uchar newRed= cv::saturate_cast<uchar>((0.189 * pixel[0]) + (0.769 * pixel[1]) + (0.393 * pixel[2]));
 
             //replaces the colors of each pixel with computed values
             result.at<cv::Vec3b>(y, x) = cv::Vec3b(newBlue, newGreen, newRed);
@@ -261,7 +245,6 @@ void NegativeFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
     }
-
     cv::Mat result = image.clone();
 
     //the loop for accessing each pixel of the image and transforming it
@@ -271,13 +254,13 @@ void NegativeFilter::apply(cv::Mat& image){
             //access to the particular pixel
             cv::Vec3b pixel = image.at<cv::Vec3b>(y, x);
 
-            //change the colors of the pixel (BGR order)
-            pixel[0] = 255 - pixel[0];
-            pixel[1] = 255 - pixel[1];
-            pixel[2] = 255 - pixel[2];
+            //compute the values of each color of the pixel (BGR order)
+            uchar newBlue = 255 - pixel[0];
+            uchar newGreen = 255 - pixel[1];
+            uchar newRed = 255 - pixel[2];
 
-            //replaces the initial pixel with the modified pixel
-            result.at<cv::Vec3b>(y, x) = pixel;
+            //replaces the colors of each pixel with computed values
+            result.at<cv::Vec3b>(y, x) = cv::Vec3b(newBlue, newGreen, newRed);
         }
     }
     image = result;
@@ -292,7 +275,6 @@ void PencilSketchFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
     }
-
     cv::Mat greyImage, blurredImage, devideImage, maskedImage, result;
 
     //converts the image colors forom BGR(BLUE, GREEN, RED) format to GRAY one channel
@@ -311,7 +293,6 @@ void PencilSketchFilter::apply(cv::Mat& image){
 
     //combines threshold mask - maskedImage, with the original sketch - devideImage
     cv::bitwise_and(maskedImage, devideImage, result);
-
     image = result;
 }
 

@@ -12,6 +12,7 @@ DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::Display
     connect(ui->displayProcessedImageButton, &QPushButton::clicked, this, &DisplayImage::callProcessedImage);
     connect(ui->displayOriginalImageButton, &QPushButton::clicked, this, &DisplayImage::callOriginalImage);
     connect(this, &DisplayImage::imagesLoaded, this, &DisplayImage::callProcessedImage);
+
     view = ui->displayArea;
 }
 
@@ -37,13 +38,21 @@ void DisplayImage::setSaveEnable(bool permission) {
     savePermission = permission;
 }
 
+void DisplayImage::setExtensions(const QStringList &extensions) {
+    if(extensions.empty()){
+        return;
+    }
+    this->extensions = extensions;
+}
+
 DisplayImage::~DisplayImage() {
     delete ui;
 }
 
 void DisplayImage::callSave() {
-    saveWinodw = new SaveImage(this);
-    connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name) {emit saveRequest(name, this->processedImage);});
+    saveWinodw = new SaveImage(extensions, this);
+    connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name, const QString& extension) {emit saveRequest(name, extension,
+                                                                                                                this->processedImage);});
     saveWinodw->exec();
 }
 

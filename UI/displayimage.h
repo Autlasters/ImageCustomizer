@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QImage>
+#include <QStringList>
+
 #include "saveimage.h"
 #include "wheelevent.h"
 
@@ -16,6 +18,7 @@ private:
     WheelEvent *view = nullptr;
     QImage processedImage;
     QImage originalImage;
+    QStringList extensions;
     bool savePermission;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
@@ -23,7 +26,8 @@ public:
     void displayProcessedImage();
     void displayOriginalImage();
     void setSaveEnable(bool permission);
-    void setScale();
+    void setExtensions(const QStringList& extensions);
+    const QStringList& getExtensions(const QStringList& extensions) const;
     ~DisplayImage();
 public slots:
     void callSave();
@@ -31,7 +35,7 @@ public slots:
     void callProcessedImage();
     void callOriginalImage();
 signals:
-    void saveRequest(const QString& name, const QImage& image);
+    void saveRequest(const QString& name, const QString& extension, const QImage& image);
     void imagesLoaded();
 };
 

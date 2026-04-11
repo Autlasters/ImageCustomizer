@@ -14,19 +14,20 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->DisplayFolderPathField->setPlaceholderText("Click Search to chose the folder for the images saving");
     ui->filtersList->addItems(FiltersCollector::getAllFilters());
 
-    connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callExit);
-    connect(ui->processButton, &QPushButton::clicked, this, &MainWindow::callProcess);
-    connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
-    connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
-
     QString savingFolderPath = settings.value("savingFolderPath", "").toString();
     if(!savingFolderPath.isEmpty() &&  QDir(savingFolderPath).exists()){
         ui->DisplayFolderPathField->setText(savingFolderPath);
     }
 
+    connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callExit);
+    connect(ui->processButton, &QPushButton::clicked, this, &MainWindow::callProcess);
+    connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
+    connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
+    connect(ui->filtersList, &QComboBox::currentIndexChanged, this, &MainWindow::changeButtonsState);
+
     view = ui->dragAndDropArea;
-    connect(ui->dragAndDropArea, &CustomView::imageDropped, this, &MainWindow::checkDragAndDrop);
     connect(view, &CustomView::imageDropped, this, &MainWindow::imageDropped);
+    connect(view, &CustomView::imageDropped, this, &MainWindow::changeButtonsState);
 }
 
 MainWindow::~MainWindow() {
@@ -49,16 +50,17 @@ void MainWindow::callProcess() {
         return;
     }
     imageManager.applyFilter(filter);
-    QImage processedImg = Converter::MatToQImge(imageManager.getProcessedImage());
-    QImage originalImg = Converter::MatToQImge(imageManager.getOriginalImage());
     displayWindow = new DisplayImage(this);
     displayWindow->setAttribute(Qt::WA_DeleteOnClose);
+
     connect(displayWindow, &QObject::destroyed, this, [this]() {displayWindow = nullptr;});
+    connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
+
     if(!ui->DisplayFolderPathField->text().isEmpty()){
         displayWindow->setSaveEnable(true);
     }
-    displayWindow->setImages(processedImg, originalImg);
-    connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
+    displayWindow->setImages(Converter::MatToQImge(imageManager.getProcessedImage()), Converter::MatToQImge(imageManager.getOriginalImage()));
+    displayWindow->setExtensions(userImageIO.getExtensions());
     displayWindow->show();
 }
 
@@ -68,7 +70,7 @@ void MainWindow::callClear() {
     ui->clearButton->setEnabled(false);
     imageManager.resetOriginalImage();
     imageManager.resetProcessedImage();
-    imageManager.resetAppliedFiltersList();
+    imagesLoaded = false;
 }
 
 void MainWindow::callExit() {
@@ -79,19 +81,22 @@ void MainWindow::imageDropped(const QString &path) {
     if(!imageManager.loadImage(path)){
         return;
     }
+    imagesLoaded = true;
 }
 
-void MainWindow::saveImage(const QString &name, const QImage &image) {
-    if(ui->DisplayFolderPathField->text().isEmpty()) return;
-    if(!userImageIO.setfolderPath(ui->DisplayFolderPathField->text())) return;
-    cv::Mat mat = Converter::QImageToMat(image);
-    userImageIO.saveImage(mat, name);
-}
-
-void MainWindow::checkDragAndDrop(const QString &path) {
-    if(!path.isEmpty()){
-        ui->processButton->setEnabled(true);
-        ui->clearButton->setEnabled(true);
+void MainWindow::saveImage(const QString &name, const QString& extension, const QImage &image) {
+    if(ui->DisplayFolderPathField->text().isEmpty()){
+        return;
     }
+    if(!userImageIO.setFolderPath(ui->DisplayFolderPathField->text())){
+        return;
+    }
+    cv::Mat mat = Converter::QImageToMat(image);
+    userImageIO.saveImage(mat, name, extension);
+}
+
+void MainWindow::changeButtonsState() {
+    ui->processButton->setEnabled(imagesLoaded && ui->filtersList->currentIndex() != -1);
+    ui->clearButton->setEnabled(imagesLoaded);
 }
 

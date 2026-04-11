@@ -31,6 +31,5 @@ std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     if(filterName == "Pencil Sketch"){
         return std::make_unique<PencilSketchFilter>();
     }
-
     return nullptr;
 }

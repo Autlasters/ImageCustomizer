@@ -35,13 +35,13 @@ void CustomView::dropEvent(QDropEvent *event) {
             continue;
         }
         QString filePath = url.toLocalFile();
-        QPixmap img(filePath);
-        if(img.isNull()){
+        QPixmap image(filePath);
+        if(image.isNull()){
             continue;
         }
         scene->clear();
         resetTransform();
-        QGraphicsPixmapItem* item = scene->addPixmap(img);
+        QGraphicsPixmapItem* item = scene->addPixmap(image);
         scene->setSceneRect(item->boundingRect());
         fitInView(item, Qt::KeepAspectRatio);
         event->acceptProposedAction();
@@ -72,5 +72,4 @@ void CustomView::showPlaceHolder() {
     QPointF alignment = mapToScene(point);
     QRectF textRect = text->boundingRect();
     text->setPos(alignment.x() - textRect.width() / 2, alignment.y() - textRect.height() / 2);
-    scene->setSceneRect(scene->itemsBoundingRect());
 }

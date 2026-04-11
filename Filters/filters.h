@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <QString>
 
+//-----------------------------------------------------Abstract Filter class -----------------------------------------------------
 class Filter {
 public:
     virtual ~Filter() = default;

@@ -2,9 +2,9 @@
 #include "wheelevent.h"
 
 WheelEvent::WheelEvent(QWidget *parent): QGraphicsView(parent), scene(new QGraphicsScene(this)) {
+    setScene(scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setScene(scene);
 }
 
 void WheelEvent::wheelEvent(QWheelEvent *event){
@@ -73,10 +73,8 @@ void WheelEvent::showEvent(QShowEvent *event) {
 void WheelEvent::setMinimalScale() {
     QRectF sceneRect = scene->sceneRect();
     QRectF viewRect = viewport()->rect();
-
     qreal sx = viewRect.width() / sceneRect.width();
     qreal sy = viewRect.height() / sceneRect.height();
-
     minimalScale = qMin(sx, sy);
     resetTransform();
     scale(minimalScale, minimalScale);

@@ -1,7 +1,8 @@
+#include <QByteArray>
 #include "imageio.h"
 #include "converter.h"
 
-bool ImageIO::setfolderPath(const QString& folderPath) {
+bool ImageIO::setFolderPath(const QString& folderPath) {
     if(folderPath.isEmpty()){
         return false;
     }
@@ -9,18 +10,25 @@ bool ImageIO::setfolderPath(const QString& folderPath) {
     return true;
 }
 
-bool ImageIO::saveImage(const cv::Mat& image, const QString& imageName){
-    if(folderPath.isEmpty() || imageName.isEmpty() || image.empty()){
+bool ImageIO::saveImage(const cv::Mat& image, const QString& imageName, const QString& extension){
+    if(folderPath.isEmpty() || image.empty() || imageName.isEmpty() || extension.isEmpty() ){
         return false;
     }
-    QString fullPath = folderPath + "/" + imageName + ".png";
-    QImage img = Converter::MatToQImge(image);
-    if (img.isNull()){
+
+    QString fullPath = folderPath + "/" + imageName + extension;
+    QString temp = extension.mid(1);
+    QByteArray format = temp.toUpper().toUtf8();
+    QImage imageToSave = Converter::MatToQImge(image);
+    if (imageToSave.isNull()){
         return false;
     }
-    return img.save(fullPath);
+    return imageToSave.save(fullPath, format.constData(), 90);
 }
 
 QString ImageIO::getPathToImage(const QString& imageName) const{
     return folderPath + "/" +imageName + ".png";
+}
+
+const QStringList &ImageIO::getExtensions() const {
+    return extensions;
 }

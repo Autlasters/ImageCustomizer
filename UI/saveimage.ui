@@ -75,6 +75,18 @@
         </spacer>
        </item>
        <item>
+        <widget class="QComboBox" name="extensionsList">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="placeholderText">
+          <string>Extension</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="saveButton">
          <property name="minimumSize">
           <size>
