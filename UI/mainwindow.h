@@ -24,6 +24,7 @@ private:
     ImageIO userImageIO;
     QSettings settings;
     bool imagesLoaded = false;
+    QString theme;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -35,6 +36,8 @@ public slots:
     void imageDropped(const QString& path);
     void saveImage(const QString& name, const QString& extension, const QImage& image);
     void changeButtonsState();
+    void fillFiltersDropdown(bool checked);
+
 };
 
 #endif // MAINWINDOW_H

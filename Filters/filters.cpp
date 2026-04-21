@@ -1,3 +1,5 @@
+#include <QStringList>
+
 #include "filters.h"
 
 //-----------------------------------------------------Black&White Filter-----------------------------------------------------
@@ -299,4 +301,33 @@ void PencilSketchFilter::apply(cv::Mat& image){
 QString PencilSketchFilter::getFilterName() const{
     return "Pencil Sketch";
 }
+
+//-----------------------------------------------------Resizing Filter-----------------------------------------------------
+void ResizingFilter::determineDimension(const QString &dimension) {
+    if(dimension.isEmpty()){
+        return;
+    }
+    QStringList widthAndHeight = dimension.split('x');
+    if(widthAndHeight.size() == 2){
+        width = widthAndHeight[0].toInt();
+        height = widthAndHeight[1].toInt();
+    }
+}
+
+void ResizingFilter::apply(cv::Mat &image) {
+    if (image.empty()){
+        return;
+    }
+    cv::Mat result;
+
+    /*resizes the image to the particular dimension, cv::Size(width, height) - the dimension of the new image, 0, 0 - the scaling factor, can be
+    used instead of cv::Size(width, height), cv::INTER_LINEAR - the type of calculations of the pixel values in the new image*/
+    cv::resize(image, result, cv::Size(width, height), 0, 0, cv::INTER_LINEAR);
+    image = result;
+}
+
+QString ResizingFilter::getFilterName() const {
+    return "Resizing Filter";
+}
+
 

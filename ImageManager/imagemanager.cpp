@@ -25,7 +25,7 @@ bool ImageManager::loadImage(const QString& path){
     return true;
 }
 
-void ImageManager::applyFilter(const QString& filterName){
+void ImageManager::applyDefaultFilter(const QString& filterName){
     std::unique_ptr<Filter> filter = FiltersFactory::createFilter(filterName);
     if(!filter){
         return;
@@ -33,6 +33,16 @@ void ImageManager::applyFilter(const QString& filterName){
 
     processedImage = originalImage.clone();
 
+    filter->apply(processedImage);
+}
+
+void ImageManager::applyResizingFilter(const QString &dimension) {
+    std::unique_ptr<ResizingFilter> filter = std::make_unique<ResizingFilter>();
+    if(!filter){
+        return;
+    }
+    processedImage = originalImage.clone();
+    filter->determineDimension(dimension);
     filter->apply(processedImage);
 }
 

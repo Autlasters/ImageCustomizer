@@ -11,7 +11,8 @@ private:
     cv::Mat processedImage;
 public:
     bool loadImage(const QString& path);
-    void applyFilter(const QString& filterName);
+    void applyDefaultFilter(const QString& filterName);
+    void applyResizingFilter(const QString& dimension);
     void resetOriginalImage();
     void resetProcessedImage();
     const cv::Mat& getOriginalImage() const;

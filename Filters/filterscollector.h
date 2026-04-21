@@ -5,7 +5,8 @@
 
 class FiltersCollector {
 public:
-    static QStringList getAllFilters();
+    static QStringList getAllDefaultFilters();
+    static QStringList getAllResizingFilters();
 };
 
 #endif // FILTERSCOLLECTOR_H

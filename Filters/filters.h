@@ -82,4 +82,15 @@ public:
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------Resizing Filter-----------------------------------------------------
+class ResizingFilter: public Filter{
+private:
+    int height;
+    int width;
+public:
+    void determineDimension(const QString& dimension);
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
 #endif // FILTERS_H

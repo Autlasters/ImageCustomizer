@@ -86,6 +86,8 @@ void WheelEvent::setImage(const QImage &image) {
     scene->clear();
     QGraphicsPixmapItem *item = scene->addPixmap(pixmap);
     scene->setSceneRect(item->boundingRect());
+    resetTransform();
+    setMinimalScale();
 }
 
 void WheelEvent::clearScene() {

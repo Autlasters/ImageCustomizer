@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->clearButton->setEnabled(false);
     ui->DisplayFolderPathField->setReadOnly(true);
     ui->DisplayFolderPathField->setPlaceholderText("Click Search to chose the folder for the images saving");
-    ui->filtersList->addItems(FiltersCollector::getAllFilters());
+    ui->filtersList->addItems(FiltersCollector::getAllDefaultFilters());
 
     QString savingFolderPath = settings.value("savingFolderPath", "").toString();
     if(!savingFolderPath.isEmpty() &&  QDir(savingFolderPath).exists()){
@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
     connect(ui->filtersList, &QComboBox::currentIndexChanged, this, &MainWindow::changeButtonsState);
+    connect(ui->resizecheckBox, &QCheckBox::toggled, this, &MainWindow::fillFiltersDropdown);
 
     view = ui->dragAndDropArea;
     connect(view, &CustomView::imageDropped, this, &MainWindow::imageDropped);
@@ -49,7 +50,12 @@ void MainWindow::callProcess() {
     if(filter.isEmpty()){
         return;
     }
-    imageManager.applyFilter(filter);
+    if(ui->resizecheckBox->isChecked()){
+        imageManager.applyResizingFilter(filter);
+    }
+    else{
+        imageManager.applyDefaultFilter(filter);
+    }
     displayWindow = new DisplayImage(this);
     displayWindow->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -99,4 +105,18 @@ void MainWindow::changeButtonsState() {
     ui->processButton->setEnabled(imagesLoaded && ui->filtersList->currentIndex() != -1);
     ui->clearButton->setEnabled(imagesLoaded);
 }
+
+void MainWindow::fillFiltersDropdown(bool checked) {
+    ui->filtersList->clear();
+    if(checked){
+        ui->filtersList->addItems(FiltersCollector::getAllResizingFilters());
+        ui->filtersList->setPlaceholderText("Resizing");
+    }
+    else{
+        ui->filtersList->addItems(FiltersCollector::getAllDefaultFilters());
+        ui->filtersList->setPlaceholderText("Filters");
+    }
+    ui->filtersList->setCurrentIndex(-1);
+}
+
 
