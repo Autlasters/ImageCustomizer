@@ -1,6 +1,6 @@
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++17
 
@@ -15,6 +15,7 @@ INCLUDEPATH += $$PWD/ImageHistoryManager
 INCLUDEPATH += $$PWD/ImageIO
 INCLUDEPATH += $$PWD/ImageHistoryIO
 INCLUDEPATH += $$PWD/UI
+INCLUDEPATH += $$PWD/QCustomPlot
 
 SOURCES += \
     Converter/converter.cpp \
@@ -27,8 +28,10 @@ SOURCES += \
     UI/main.cpp \
     UI/mainwindow.cpp \
     UI/displayimage.cpp \
+    UI/plotwindow.cpp \
     UI/saveimage.cpp \
-    UI/wheelevent.cpp
+    UI/wheelevent.cpp \
+    QCustomPlot/qcustomplot.cpp
 
 HEADERS += \
     Converter/converter.h \
@@ -40,12 +43,15 @@ HEADERS += \
     UI/draganddropevent.h \
     UI/mainwindow.h \
     UI/displayimage.h \
+    UI/plotwindow.h \
     UI/saveimage.h \
-    UI/wheelevent.h
+    UI/wheelevent.h \
+    QCustomPlot/qcustomplot.h
 
 FORMS += \
     UI/mainwindow.ui \
     UI/displayimage.ui \
+    UI/plotwindow.ui \
     UI/saveimage.ui
 
 # Default rules for deployment.

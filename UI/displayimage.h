@@ -7,6 +7,7 @@
 
 #include "saveimage.h"
 #include "wheelevent.h"
+#include "plotwindow.h"
 
 namespace Ui { class DisplayImage; }
 
@@ -15,6 +16,7 @@ class DisplayImage : public QDialog {
 private:
     Ui::DisplayImage *ui;
     SaveImage *saveWinodw = nullptr;
+    PlotWindow *plotWinodw = nullptr;
     WheelEvent *view = nullptr;
     QImage processedImage;
     QImage originalImage;
@@ -34,6 +36,7 @@ public slots:
     void callClose();
     void callProcessedImage();
     void callOriginalImage();
+    void callCurveAnalysis();
 signals:
     void saveRequest(const QString& name, const QString& extension, const QImage& image);
     void imagesLoaded();

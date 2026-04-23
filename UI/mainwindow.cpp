@@ -110,7 +110,7 @@ void MainWindow::fillFiltersDropdown(bool checked) {
     ui->filtersList->clear();
     if(checked){
         ui->filtersList->addItems(FiltersCollector::getAllResizingFilters());
-        ui->filtersList->setPlaceholderText("Resizing");
+        ui->filtersList->setPlaceholderText("Dimensions");
     }
     else{
         ui->filtersList->addItems(FiltersCollector::getAllDefaultFilters());

@@ -11,6 +11,7 @@ DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::Display
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
     connect(ui->displayProcessedImageButton, &QPushButton::clicked, this, &DisplayImage::callProcessedImage);
     connect(ui->displayOriginalImageButton, &QPushButton::clicked, this, &DisplayImage::callOriginalImage);
+    connect(ui->curvesAnalysisButton, &QPushButton::clicked, this, &DisplayImage::callCurveAnalysis);
     connect(this, &DisplayImage::imagesLoaded, this, &DisplayImage::callProcessedImage);
 
     view = ui->displayArea;
@@ -68,6 +69,13 @@ void DisplayImage::callOriginalImage(){
     ui->saveButton->setEnabled(false);
     ui->displayOriginalImageButton->setEnabled(false);
     ui->displayProcessedImageButton->setEnabled(true);
+}
+
+void DisplayImage::callCurveAnalysis() {
+    plotWinodw = new PlotWindow(this);
+    plotWinodw->setAttribute(Qt::WA_DeleteOnClose);
+    connect(plotWinodw, &QObject::destroyed, this, [this]() {plotWinodw = nullptr;});
+    plotWinodw->exec();
 }
 
 void DisplayImage::callClose() {
