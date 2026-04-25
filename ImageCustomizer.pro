@@ -16,6 +16,8 @@ INCLUDEPATH += $$PWD/ImageIO
 INCLUDEPATH += $$PWD/ImageHistoryIO
 INCLUDEPATH += $$PWD/UI
 INCLUDEPATH += $$PWD/QCustomPlot
+INCLUDEPATH += $$PWD/PlotManager
+
 
 SOURCES += \
     Converter/converter.cpp \
@@ -31,7 +33,8 @@ SOURCES += \
     UI/plotwindow.cpp \
     UI/saveimage.cpp \
     UI/wheelevent.cpp \
-    QCustomPlot/qcustomplot.cpp
+    QCustomPlot/qcustomplot.cpp \
+    PlotManager/plotmanager.cpp
 
 HEADERS += \
     Converter/converter.h \
@@ -46,7 +49,8 @@ HEADERS += \
     UI/plotwindow.h \
     UI/saveimage.h \
     UI/wheelevent.h \
-    QCustomPlot/qcustomplot.h
+    QCustomPlot/qcustomplot.h \
+    PlotManager/plotmanager.h
 
 FORMS += \
     UI/mainwindow.ui \

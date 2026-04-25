@@ -3,9 +3,8 @@
 #include "displayimage.h"
 #include "ui_displayimage.h"
 
-DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage) {
+DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), plotManager(PlotManager()) {
     ui->setupUi(this);
-    ui->saveButton->setEnabled(false);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
     connect(ui->closeButton, &QPushButton::clicked, this, &DisplayImage::callClose);
@@ -13,7 +12,6 @@ DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::Display
     connect(ui->displayOriginalImageButton, &QPushButton::clicked, this, &DisplayImage::callOriginalImage);
     connect(ui->curvesAnalysisButton, &QPushButton::clicked, this, &DisplayImage::callCurveAnalysis);
     connect(this, &DisplayImage::imagesLoaded, this, &DisplayImage::callProcessedImage);
-
     view = ui->displayArea;
 }
 
@@ -24,19 +22,15 @@ void DisplayImage::setImages(const QImage& processedImage, const QImage& origina
     }
     this->processedImage = processedImage;
     this->originalImage = originalImage;
+    plotManager.setImages(this->originalImage, this->processedImage);
     emit imagesLoaded();
 }
 
-void DisplayImage::displayProcessedImage(){
-    view->setImage(processedImage);
-}
-
-void DisplayImage::displayOriginalImage(){
-    view->setImage(originalImage);
-}
-
-void DisplayImage::setSaveEnable(bool permission) {
-    savePermission = permission;
+void DisplayImage::setPermissons(bool savePermission, bool curvesAnalysisPermission) {
+    this->savePermission = savePermission;
+    this->curvesAnalysisPermission = curvesAnalysisPermission;
+    ui->saveButton->setEnabled(this->savePermission);
+    ui->curvesAnalysisButton->setEnabled(this->curvesAnalysisPermission);
 }
 
 void DisplayImage::setExtensions(const QStringList &extensions) {
@@ -58,14 +52,14 @@ void DisplayImage::callSave() {
 }
 
 void DisplayImage::callProcessedImage(){
-    displayProcessedImage();
+    view->setImage(processedImage);
     ui->saveButton->setEnabled(savePermission);
     ui->displayProcessedImageButton->setEnabled(false);
     ui->displayOriginalImageButton->setEnabled(true);
 }
 
 void DisplayImage::callOriginalImage(){
-    displayOriginalImage();
+    view->setImage(originalImage);
     ui->saveButton->setEnabled(false);
     ui->displayOriginalImageButton->setEnabled(false);
     ui->displayProcessedImageButton->setEnabled(true);
@@ -73,12 +67,23 @@ void DisplayImage::callOriginalImage(){
 
 void DisplayImage::callCurveAnalysis() {
     plotWinodw = new PlotWindow(this);
+    plotWinodw->setRowSlider(originalImage.height()-1);
+    plotWinodw->setHorizontalAxis(originalImage.width());
     plotWinodw->setAttribute(Qt::WA_DeleteOnClose);
     connect(plotWinodw, &QObject::destroyed, this, [this]() {plotWinodw = nullptr;});
+    connect(plotWinodw, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateRowsValues);
+    connect(this, &DisplayImage::valuesCalculated, plotWinodw, &PlotWindow::drawCurves);
     plotWinodw->exec();
+}
+
+void DisplayImage::calculateRowsValues(const int &index){
+    QVector<double> originalValues = plotManager.getOriginalImagRowValues(index);
+    QVector<double> processeValues = plotManager.getprocessedImagRowValues(index);
+    emit valuesCalculated(originalValues, processeValues);
 }
 
 void DisplayImage::callClose() {
     close();
 }
+
 

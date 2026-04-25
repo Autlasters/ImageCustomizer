@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>784</width>
-    <height>457</height>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="rowLabel">
            <property name="font">
             <font>
              <bold>true</bold>
@@ -55,7 +55,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="horizontalSlider">
+          <widget class="QSlider" name="rowSlider">
            <property name="minimumSize">
             <size>
              <width>500</width>
@@ -70,6 +70,13 @@
            </property>
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="rowNumberLabel">
+           <property name="text">
+            <string>0</string>
            </property>
           </widget>
          </item>
