@@ -1,5 +1,6 @@
 #include "plotwindow.h"
 #include "ui_plotwindow.h"
+#include <opencv2/opencv.hpp>
 
 PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow) {
     ui->setupUi(this);
@@ -23,13 +24,15 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     setLegend();
 
     connect(ui->closeButton, &QPushButton::clicked, this, &PlotWindow::callClose);
-    connect(ui->defaultCurvesButton, &QPushButton::clicked, this, &PlotWindow::callNormalCurves);
-    connect(ui->differentiaCurveButton, &QPushButton::clicked, this, &PlotWindow::callDifferentialCurve);
+    connect(ui->originalCurvesButton, &QPushButton::clicked, this, &PlotWindow::callNormalCurves);
+    connect(ui->differentialCurveButton, &QPushButton::clicked, this, &PlotWindow::callDifferentialCurve);
+    connect(ui->originalSmothedCurvesButton, &QPushButton::clicked, this, &PlotWindow::callSmoothedCurves);
+    connect(ui->differentialSmoothedCurveButton, &QPushButton::clicked, this, &PlotWindow::callDifferentialSmoothedCurve);
     connect(ui->rowSlider, &QSlider::valueChanged, this, [=](int value){ui->rowNumberLabel->setText(QString::number(value));});
     connect(ui->rowSlider, &QSlider::valueChanged, this, &PlotWindow::sliderIndexChanged);
     QTimer::singleShot(0, this, [this]() {emit ui->rowSlider->valueChanged(ui->rowSlider->value());});
 
-    ui->defaultCurvesButton->setEnabled(false);
+    ui->originalCurvesButton->setEnabled(false);
 }
 
 PlotWindow::~PlotWindow() {
@@ -82,14 +85,14 @@ void PlotWindow::updateLegendLayout() {
 }
 
 void PlotWindow::updateLegend() {
-    if(mode == Mode::NormalCurves){
+    if(mode == Mode::NormalCurves || mode == Mode::SmoothedCurves){
         ui->plotArea->graph(0)->setName("Original Image Curve");
         ui->plotArea->graph(1)->setName("Processed Image Curve");
         ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
         ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
         ui->plotArea->graph(1)->setVisible(true);
     }
-    else if(mode == Mode::DifferentialCurve){
+    else if(mode == Mode::DifferentialCurve || mode == Mode::DifferentialSmoothedCurve){
         ui->plotArea->graph(0)->setName("Differential Curve");
         ui->plotArea->graph(0)->setPen(QPen(QColor(127, 183, 126)));
         ui->plotArea->graph(1)->setVisible(false);
@@ -122,33 +125,103 @@ void PlotWindow::drawCurves(const QVector<double>& origianlValues, const QVector
         ui->plotArea->graph(0)->setData(x, y);
         ui->plotArea->graph(1)->setVisible(false);
     }
+    else if(mode == Mode::SmoothedCurves){
+        auto [origianlValuesSmoothed, processedValuesSmoothed] = calculateSmoothedCurves(origianlValues, processedValues);
+        ui->plotArea->graph(0)->setData(x, origianlValuesSmoothed);
+        ui->plotArea->graph(1)->setData(x, processedValuesSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+    }
+    else if(mode == Mode::DifferentialSmoothedCurve){
+        QVector<double> y = calculateDifferentialSmoothedCurve(origianlValues, processedValues);
+        ui->plotArea->graph(0)->setData(x, y);
+        ui->plotArea->graph(1)->setVisible(false);
+    }
     ui->plotArea->replot();
 }
 
-QVector<double> PlotWindow::calculateDifferentialCurve(const QVector<double> &origianlValues, const QVector<double> &processedValues){
-    QVector<double> difference(origianlValues.size());
-    for(int i = 0; i < origianlValues.size(); ++i){
-        difference[i] = processedValues[i] - origianlValues[i];
+QVector<double> PlotWindow::calculateDifferentialCurve(const QVector<double> &originalValues, const QVector<double> &processedValues){
+    QVector<double> difference(originalValues.size());
+    for(int i = 0; i <  originalValues.size(); ++i){
+        difference[i] = processedValues[i] -  originalValues[i];
     }
     return difference;
+}
+
+QVector<double> PlotWindow::calculateDifferentialSmoothedCurve(const QVector<double> &originalValues, const QVector<double> &processedValues) {
+    QVector<double> difference(originalValues.size());
+    cv::Mat differentialValuesMat(1, originalValues.size(), CV_64F);
+    for(int i = 0; i < originalValues.size(); ++i){
+       differentialValuesMat.at<double>(0, i) = processedValues[i] -  originalValues[i];
+    }
+
+    cv::Mat differentialValuesMatSmoothed;
+    cv::GaussianBlur(differentialValuesMat, differentialValuesMatSmoothed, cv::Size(5, 1), 3);
+
+    for(int i = 0; i < originalValues.size(); ++i){
+        difference[i] = differentialValuesMatSmoothed.at<double>(0, i);
+    }
+    return difference;
+}
+
+std::pair<QVector<double>, QVector<double>> PlotWindow::calculateSmoothedCurves(const QVector<double> &originalValues,
+                                                                                 const QVector<double> &processedValues) {
+    cv::Mat originalValuesMat(1, originalValues.size(), CV_64F);
+    cv::Mat processedValuesMat(1, processedValues.size(), CV_64F);
+    for(int i = 0; i < originalValues.size(); ++i){
+        originalValuesMat.at<double>(0, i) = originalValues[i];
+        processedValuesMat.at<double>(0, i) = processedValues[i];
+    }
+
+    cv::Mat originalValuesMatSmoothed, processedValuesMatSmoothed;
+    cv::GaussianBlur(originalValuesMat, originalValuesMatSmoothed, cv::Size(5, 1), 3);
+    cv::GaussianBlur(processedValuesMat, processedValuesMatSmoothed, cv::Size(5, 1), 3);
+
+    QVector<double> originalValuesSmoothed(originalValues.size()), processedValuesSmoothed(processedValues.size());
+    for(int i = 0; i < originalValues.size(); ++i){
+        originalValuesSmoothed[i] = originalValuesMatSmoothed.at<double>(0, i);
+        processedValuesSmoothed[i] = processedValuesMatSmoothed.at<double>(0, i);
+    }
+    return {originalValuesSmoothed, processedValuesSmoothed};
 }
 
 void PlotWindow::callNormalCurves() {
     mode = Mode::NormalCurves;
     sliderIndexChanged(ui->rowSlider->value());
     updateLegend();
-    ui->defaultCurvesButton->setEnabled(false);
-    ui->differentiaCurveButton->setEnabled(true);
-    ui->smothedCurvesButton->setEnabled(true);
+    ui->originalCurvesButton->setEnabled(false);
+    ui->differentialCurveButton->setEnabled(true);
+    ui->originalSmothedCurvesButton->setEnabled(true);
+    ui->differentialSmoothedCurveButton->setEnabled(true);
 }
 
 void PlotWindow::callDifferentialCurve() {
     mode = Mode::DifferentialCurve;
     sliderIndexChanged(ui->rowSlider->value());
     updateLegend();
-    ui->differentiaCurveButton->setEnabled(false);
-    ui->defaultCurvesButton->setEnabled(true);
-    ui->smothedCurvesButton->setEnabled(true);
+    ui->differentialCurveButton->setEnabled(false);
+    ui->originalCurvesButton->setEnabled(true);
+    ui->originalSmothedCurvesButton->setEnabled(true);
+    ui->differentialSmoothedCurveButton->setEnabled(true);
+}
+
+void PlotWindow::callSmoothedCurves() {
+    mode = Mode::SmoothedCurves;
+    sliderIndexChanged(ui->rowSlider->value());
+    updateLegend();
+    ui->originalSmothedCurvesButton->setEnabled(false);
+    ui->differentialCurveButton->setEnabled(true);
+    ui->originalCurvesButton->setEnabled(true);
+    ui->differentialSmoothedCurveButton->setEnabled(true);
+}
+
+void PlotWindow::callDifferentialSmoothedCurve() {
+    mode = Mode::DifferentialSmoothedCurve;
+    sliderIndexChanged(ui->rowSlider->value());
+    updateLegend();
+    ui->differentialSmoothedCurveButton->setEnabled(false);
+    ui->differentialCurveButton->setEnabled(true);
+    ui->originalCurvesButton->setEnabled(true);
+    ui->originalSmothedCurvesButton->setEnabled(true);
 }
 
 void PlotWindow::callClose() {

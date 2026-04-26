@@ -5,7 +5,7 @@
 
 namespace Ui { class PlotWindow; }
 
-enum Mode {NormalCurves, DifferentialCurve, SmoothedCurves};
+enum Mode {NormalCurves, DifferentialCurve, SmoothedCurves, DifferentialSmoothedCurve};
 
 class PlotWindow : public QDialog {
     Q_OBJECT
@@ -21,12 +21,15 @@ public:
     void updateLegend();
     void setRowSlider(const int& value);
     void setHorizontalAxis(const int& xAxis);
-    QVector<double> calculateDifferentialCurve(const QVector<double>& origianlValues, const QVector<double>& processedValues);
-    std::pair<QVector<double>, QVector<double>> calculateSmoothedCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    QVector<double> calculateDifferentialCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);
+    QVector<double> calculateDifferentialSmoothedCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);
+    std::pair<QVector<double>, QVector<double>> calculateSmoothedCurves(const QVector<double>& originalValues, const QVector<double>& processedValues);
 public slots:
     void drawCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues);
     void callNormalCurves();
     void callDifferentialCurve();
+    void callSmoothedCurves();
+    void callDifferentialSmoothedCurve();
     void callClose();
 signals:
     void sliderIndexChanged(const int& index);

@@ -113,7 +113,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="defaultCurvesButton">
+        <widget class="QPushButton" name="originalCurvesButton">
          <property name="minimumSize">
           <size>
            <width>100</width>
@@ -137,7 +137,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="smothedCurvesButton">
+        <widget class="QPushButton" name="originalSmothedCurvesButton">
          <property name="minimumSize">
           <size>
            <width>100</width>
@@ -156,12 +156,13 @@
           </font>
          </property>
          <property name="text">
-          <string>Smothed Curves</string>
+          <string>Original
+Smothed Curves</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="differentiaCurveButton">
+        <widget class="QPushButton" name="differentialCurveButton">
          <property name="minimumSize">
           <size>
            <width>100</width>
@@ -180,7 +181,32 @@
           </font>
          </property>
          <property name="text">
-          <string>Differental Curve</string>
+          <string>Differential Curve</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="differentialSmoothedCurveButton">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>125</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Differential
+ Smoothed Curve</string>
          </property>
         </widget>
        </item>
