@@ -3,7 +3,7 @@
 #include "displayimage.h"
 #include "ui_displayimage.h"
 
-DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), plotManager(PlotManager()) {
+DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), imageToSignalManager(ImageToSignalManager()) {
     ui->setupUi(this);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &DisplayImage::callSave);
@@ -22,7 +22,7 @@ void DisplayImage::setImages(const QImage& processedImage, const QImage& origina
     }
     this->processedImage = processedImage;
     this->originalImage = originalImage;
-    plotManager.setImages(this->originalImage, this->processedImage);
+    imageToSignalManager.setImages(this->originalImage, this->processedImage);
     emit imagesLoaded();
 }
 
@@ -67,18 +67,18 @@ void DisplayImage::callOriginalImage(){
 
 void DisplayImage::callCurveAnalysis() {
     plotWinodw = new PlotWindow(this);
-    plotWinodw->setRowSlider(originalImage.height()-1);
+    plotWinodw->setRowSliderRange(originalImage.height()-1);
     plotWinodw->setHorizontalAxis(originalImage.width());
     plotWinodw->setAttribute(Qt::WA_DeleteOnClose);
     connect(plotWinodw, &QObject::destroyed, this, [this]() {plotWinodw = nullptr;});
-    connect(plotWinodw, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateRowsValues);
+    connect(plotWinodw, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateValues);
     connect(this, &DisplayImage::valuesCalculated, plotWinodw, &PlotWindow::drawCurves);
     plotWinodw->exec();
 }
 
-void DisplayImage::calculateRowsValues(const int &index){
-    QVector<double> originalValues = plotManager.getOriginalImagRowValues(index);
-    QVector<double> processeValues = plotManager.getprocessedImagRowValues(index);
+void DisplayImage::calculateValues(const int &index){
+    QVector<double> originalValues = imageToSignalManager.getOriginalImagRowValues(index);
+    QVector<double> processeValues = imageToSignalManager.getprocessedImagRowValues(index);
     emit valuesCalculated(originalValues, processeValues);
 }
 

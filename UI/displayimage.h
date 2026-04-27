@@ -8,7 +8,7 @@
 #include "saveimage.h"
 #include "wheelevent.h"
 #include "plotwindow.h"
-#include "plotmanager.h"
+#include "imagetosignalmanager.h"
 
 namespace Ui { class DisplayImage; }
 
@@ -19,7 +19,7 @@ private:
     SaveImage *saveWinodw = nullptr;
     PlotWindow *plotWinodw = nullptr;
     WheelEvent *view = nullptr;
-    PlotManager plotManager;
+    ImageToSignalManager imageToSignalManager;
     QImage processedImage;
     QImage originalImage;
     QStringList extensions;
@@ -38,11 +38,11 @@ public slots:
     void callProcessedImage();
     void callOriginalImage();
     void callCurveAnalysis();
-    void calculateRowsValues(const int& index);
+    void calculateValues(const int& index);
 signals:
     void saveRequest(const QString& name, const QString& extension, const QImage& image);
     void imagesLoaded();
-    void valuesCalculated(QVector<double>& origianlValues, QVector<double>& processedValues);
+    void valuesCalculated(const QVector<double>& origianlValues, const QVector<double>& processedValues);
 };
 
 #endif // DISPLAYIMAGE_H

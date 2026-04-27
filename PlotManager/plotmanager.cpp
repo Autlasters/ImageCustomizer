@@ -1,52 +1,66 @@
 #include "plotmanager.h"
-#include "converter.h"
+
+#include <opencv2/opencv.hpp>
 
 PlotManager::PlotManager() {}
 
-void PlotManager::setImages(const QImage &originalImage, const QImage &processedImage) {
-    if(originalImage.format() != QImage::Format_Grayscale8){
-        QImage grayScaledOriginal = originalImage.convertToFormat(QImage::Format_Grayscale8);
-        originalGrayScaledImage = Converter::QImageToMat(grayScaledOriginal);
-    }
-    else{
-        originalGrayScaledImage = Converter::QImageToMat(originalImage);
-    }
-
-    if(processedImage.format() != QImage::Format_Grayscale8){
-        QImage grayScaledProcessed = processedImage.convertToFormat(QImage::Format_Grayscale8);
-        processedGrayScaledImage = Converter::QImageToMat(grayScaledProcessed);
-    }
-    else{
-        processedGrayScaledImage = Converter::QImageToMat(processedImage);
-    }
+void PlotManager::setCurvesValues(const QVector<double> &origianlValues, const QVector<double> &processedValues) {
+    this->origianlValues = origianlValues;
+    this->processedValues = processedValues;
 }
 
-QVector<double> PlotManager::getOriginalImagRowValues(const int &y) const {
-    cv::Mat rowMat = originalGrayScaledImage.row(y);
-    QVector<double> values;
-    for(int col = 0; col < rowMat.cols; ++col){
-        uchar value = rowMat.at<uchar>(0, col);
-        values.append(static_cast<double>(value));
+QVector<double> PlotManager::calculateHorizontalValues(const QVector<double> &values) {
+    QVector<double> xValeus(values.size());
+    for (int i = 0; i < values.size(); ++i) {
+        xValeus[i] = i;
     }
-    return values;
+    return xValeus;
 }
 
-QVector<double> PlotManager::getprocessedImagRowValues(const int &y) const {
-    cv::Mat rowMat = processedGrayScaledImage.row(y);
-    QVector<double> values;
-    for(int col = 0; col < rowMat.cols; ++col){
-        uchar value = rowMat.at<uchar>(0, col);
-        values.append(static_cast<double>(value));
+QVector<double> PlotManager::calculateDifferentialCurve(const QVector<double> &originalValues, const QVector<double> &processedValues) {
+    QVector<double> differentialValues(originalValues.size());
+    for(int i = 0; i <  originalValues.size(); ++i){
+        differentialValues[i] = processedValues[i] -  originalValues[i];
     }
-    return values;
+    return differentialValues;
 }
 
-const cv::Mat &PlotManager::getOriginalGrayScaledImage() const {
-    return originalGrayScaledImage;
+QVector<double> PlotManager::calculateDifferentialSmoothedCurve(const QVector<double> &originalValues, const QVector<double> &processedValues) {
+    QVector<double> differentialValues(originalValues.size());
+    cv::Mat differentialValuesMat(1, originalValues.size(), CV_64F);
+    for(int i = 0; i < originalValues.size(); ++i){
+        differentialValuesMat.at<double>(0, i) = processedValues[i] -  originalValues[i];
+    }
+
+    cv::Mat differentialValuesMatSmoothed;
+    cv::GaussianBlur(differentialValuesMat, differentialValuesMatSmoothed, cv::Size(5, 1), 3);
+
+    for(int i = 0; i < originalValues.size(); ++i){
+       differentialValues[i] = differentialValuesMatSmoothed.at<double>(0, i);
+    }
+    return differentialValues;
 }
 
-const cv::Mat &PlotManager::getProcessedGrayScaledImage() const {
-    return processedGrayScaledImage;
+std::pair<QVector<double>, QVector<double> > PlotManager::calculateSmoothedCurves(const QVector<double> &originalValues,
+                                                                                   const QVector<double> &processedValues) {
+    cv::Mat originalValuesMat(1, originalValues.size(), CV_64F);
+    cv::Mat processedValuesMat(1, processedValues.size(), CV_64F);
+    for(int i = 0; i < originalValues.size(); ++i){
+        originalValuesMat.at<double>(0, i) = originalValues[i];
+        processedValuesMat.at<double>(0, i) = processedValues[i];
+    }
+
+    cv::Mat originalValuesMatSmoothed, processedValuesMatSmoothed;
+    cv::GaussianBlur(originalValuesMat, originalValuesMatSmoothed, cv::Size(5, 1), 3);
+    cv::GaussianBlur(processedValuesMat, processedValuesMatSmoothed, cv::Size(5, 1), 3);
+
+    QVector<double> originalValuesSmoothed(originalValues.size()), processedValuesSmoothed(processedValues.size());
+    for(int i = 0; i < originalValues.size(); ++i){
+        originalValuesSmoothed[i] = originalValuesMatSmoothed.at<double>(0, i);
+        processedValuesSmoothed[i] = processedValuesMatSmoothed.at<double>(0, i);
+    }
+    return {originalValuesSmoothed, processedValuesSmoothed};
 }
+
 
 

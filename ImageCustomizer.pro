@@ -16,6 +16,7 @@ INCLUDEPATH += $$PWD/ImageIO
 INCLUDEPATH += $$PWD/ImageHistoryIO
 INCLUDEPATH += $$PWD/UI
 INCLUDEPATH += $$PWD/QCustomPlot
+INCLUDEPATH += $$PWD/ImageToSignalManager
 INCLUDEPATH += $$PWD/PlotManager
 
 
@@ -26,6 +27,7 @@ SOURCES += \
     Filters/filtersfactory.cpp \
     ImageIO/imageio.cpp \
     ImageManager/imagemanager.cpp \
+    ImageToSignalManager/imagetosignalmanager.cpp \
     UI/draganddropevent.cpp \
     UI/main.cpp \
     UI/mainwindow.cpp \
@@ -43,6 +45,7 @@ HEADERS += \
     Filters/filtersfactory.h \
     ImageIO/imageio.h \
     ImageManager/imagemanager.h \
+    ImageToSignalManager/imagetosignalmanager.h \
     UI/draganddropevent.h \
     UI/mainwindow.h \
     UI/displayimage.h \

@@ -1,21 +1,19 @@
 #ifndef PLOTMANAGER_H
 #define PLOTMANAGER_H
 
-#include <opencv2/opencv.hpp>
 #include <QVector>
-#include <QImage>
 
 class PlotManager {
 private:
-    cv::Mat originalGrayScaledImage;
-    cv::Mat processedGrayScaledImage;
+    QVector<double> origianlValues;
+    QVector<double> processedValues;
 public:
     PlotManager();
-    void setImages(const QImage& originalImage, const QImage& processedImage);
-    QVector<double> getOriginalImagRowValues(const int& y) const;
-    QVector<double> getprocessedImagRowValues(const int& y) const;
-    const cv::Mat& getOriginalGrayScaledImage() const;
-    const cv::Mat& getProcessedGrayScaledImage() const;
+    void setCurvesValues(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    QVector<double> calculateHorizontalValues(const QVector<double>& values);
+    QVector<double> calculateDifferentialCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);
+    QVector<double> calculateDifferentialSmoothedCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);
+    std::pair<QVector<double>, QVector<double>> calculateSmoothedCurves(const QVector<double>& originalValues, const QVector<double>& processedValues);
 };
 
 #endif // PLOTMANAGER_H
