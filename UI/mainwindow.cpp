@@ -6,13 +6,14 @@
 #include "converter.h"
 #include "filterscollector.h"
 
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow), settings("ImageCustomizer", "Settings") {
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow), settings("ImageCustomizer", "Settings"),
+                                                                                                mode(Mode::DefaultMode) {
     ui->setupUi(this);
     ui->processButton->setEnabled(false);
     ui->clearButton->setEnabled(false);
     ui->DisplayFolderPathField->setReadOnly(true);
     ui->DisplayFolderPathField->setPlaceholderText("Click Search to chose the folder for the images saving");
-    ui->filtersList->addItems(FiltersCollector::getAllDefaultFilters());
+    fillFiltersDropdown();
 
     QString savingFolderPath = settings.value("savingFolderPath", "").toString();
     if(!savingFolderPath.isEmpty() &&  QDir(savingFolderPath).exists()){
@@ -24,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
     connect(ui->filtersList, &QComboBox::currentIndexChanged, this, &MainWindow::changeButtonsState);
-    connect(ui->resizecheckBox, &QCheckBox::toggled, this, &MainWindow::fillFiltersDropdown);
+    connect(ui->resizecheckBox, &QCheckBox::toggled, this, &MainWindow::changeMode);
+    connect(this, &MainWindow::filtersModeChanged, this, &MainWindow::fillFiltersDropdown);
 
     view = ui->dragAndDropArea;
     connect(view, &CustomView::imageDropped, this, &MainWindow::imageDropped);
@@ -50,7 +52,7 @@ void MainWindow::callProcess() {
     if(filter.isEmpty()){
         return;
     }
-    if(ui->resizecheckBox->isChecked()){
+    if(mode == Mode::ResizingMode){
         imageManager.applyResizingFilter(filter);
     }
     else{
@@ -112,9 +114,9 @@ void MainWindow::changeButtonsState() {
     ui->clearButton->setEnabled(imagesLoaded);
 }
 
-void MainWindow::fillFiltersDropdown(bool checked) {
+void MainWindow::fillFiltersDropdown() {
     ui->filtersList->clear();
-    if(checked){
+    if(mode == Mode::ResizingMode){
         ui->filtersList->addItems(FiltersCollector::getAllResizingFilters());
         ui->filtersList->setPlaceholderText("Dimensions");
     }
@@ -123,6 +125,16 @@ void MainWindow::fillFiltersDropdown(bool checked) {
         ui->filtersList->setPlaceholderText("Filters");
     }
     ui->filtersList->setCurrentIndex(-1);
+}
+
+void MainWindow::changeMode(bool checked) {
+    if(checked == true){
+        mode = Mode::ResizingMode;
+    }
+    else{
+        mode = Mode::DefaultMode;
+    }
+    emit filtersModeChanged();
 }
 
 

@@ -40,6 +40,12 @@ void DisplayImage::setExtensions(const QStringList &extensions) {
     this->extensions = extensions;
 }
 
+void DisplayImage::checkProcessedImage() {
+    if(processedImage.format() == QImage::Format_Grayscale8){
+        plotWinodw->lockRGBMode();
+    }
+}
+
 DisplayImage::~DisplayImage() {
     delete ui;
 }
@@ -73,12 +79,13 @@ void DisplayImage::callCurveAnalysis() {
     connect(plotWinodw, &QObject::destroyed, this, [this]() {plotWinodw = nullptr;});
     connect(plotWinodw, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateValues);
     connect(this, &DisplayImage::valuesCalculated, plotWinodw, &PlotWindow::drawCurves);
+    checkProcessedImage();
     plotWinodw->exec();
 }
 
 void DisplayImage::calculateValues(const int &index){
-    QVector<double> originalValues = imageToSignalManager.getOriginalImagRowValues(index);
-    QVector<double> processeValues = imageToSignalManager.getprocessedImagRowValues(index);
+    QVector<double> originalValues = imageToSignalManager.getOriginalGrayScaledImageRowValues(index);
+    QVector<double> processeValues = imageToSignalManager.getProcessedGrayScaledImageRowValues(index);
     emit valuesCalculated(originalValues, processeValues);
 }
 

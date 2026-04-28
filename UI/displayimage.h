@@ -31,6 +31,7 @@ public:
     void setPermissons(bool savePermission, bool curvesAnalysisPermission);
     void setExtensions(const QStringList& extensions);
     const QStringList& getExtensions(const QStringList& extensions) const;
+    void checkProcessedImage();
     ~DisplayImage();
 public slots:
     void callSave();
@@ -43,6 +44,7 @@ signals:
     void saveRequest(const QString& name, const QString& extension, const QImage& image);
     void imagesLoaded();
     void valuesCalculated(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+
 };
 
 #endif // DISPLAYIMAGE_H

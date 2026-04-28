@@ -233,8 +233,6 @@ void EdgeDetectionFilter::apply(cv::Mat& image){
     //converts the mathematical result into the suitable image form: uint8 [0-255]
     cv::convertScaleAbs(Gradient, result);
 
-    //converts the image colors forom GRAY one channel format to BGR 3-channels
-    cv::cvtColor(result, result, cv::COLOR_GRAY2BGR);
     image = result;
 }
 

@@ -4,11 +4,6 @@
 
 PlotManager::PlotManager() {}
 
-void PlotManager::setCurvesValues(const QVector<double> &origianlValues, const QVector<double> &processedValues) {
-    this->origianlValues = origianlValues;
-    this->processedValues = processedValues;
-}
-
 QVector<double> PlotManager::calculateHorizontalValues(const QVector<double> &values) {
     QVector<double> xValeus(values.size());
     for (int i = 0; i < values.size(); ++i) {

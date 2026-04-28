@@ -9,7 +9,6 @@ private:
     QVector<double> processedValues;
 public:
     PlotManager();
-    void setCurvesValues(const QVector<double>& origianlValues, const QVector<double>& processedValues);
     QVector<double> calculateHorizontalValues(const QVector<double>& values);
     QVector<double> calculateDifferentialCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);
     QVector<double> calculateDifferentialSmoothedCurve(const QVector<double>& originalValues, const QVector<double>& processedValues);

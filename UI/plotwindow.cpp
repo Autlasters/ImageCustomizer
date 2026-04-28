@@ -2,9 +2,11 @@
 #include "ui_plotwindow.h"
 #include <opencv2/opencv.hpp>
 
-PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow), plotManager(PlotManager()) {
+PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow), plotManager(PlotManager()),
+                                                                            mainMode(MainMode::DefaultMode),
+                                                                            defaultCurvesMode(DefaultCurvesMode::NormalCurves),
+                                                                            rgbCurvesMode(RGBCurvesMode::NormalRBGCurves) {
     ui->setupUi(this);
-    mode = Mode::NormalCurves;
     ui->plotArea->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->plotArea->yAxis->setRange(0, 255);
 
@@ -14,19 +16,24 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     ui->rowSlider->setTickPosition(QSlider::TicksBelow);
     ui->rowSlider->setTickInterval(50);
 
-    ui->modeDropDown->addItems({"Default Curves", "Smothed Curves", "Differental Curve", "Smoothed Differental Curve"});
+    fillModeDropDown();
 
     setTheme();
     ui->plotArea->addGraph();
     ui->plotArea->addGraph();
+
     ui->plotArea->graph(0)->setName("Original Image Curve");
-    ui->plotArea->graph(1)->setName("Processed Image Curve");
     ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
+    ui->plotArea->graph(1)->setName("Processed Image Curve");
     ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
+
     setLegend();
+    updateLegendLayout();
 
     connect(ui->closeButton, &QPushButton::clicked, this, &PlotWindow::callClose);
-    connect(ui->modeDropDown, &QComboBox::currentTextChanged, this, &PlotWindow::changeMode);
+    connect(ui->rgbModeCheckBox, &QCheckBox::toggled, this, &PlotWindow::changeMainMode);
+    connect(ui->modeDropDown, &QComboBox::currentTextChanged, this, &PlotWindow::changeCurvesMode);
+    connect(this, &PlotWindow::mainModeChanged, this, &PlotWindow::fillModeDropDown);
     connect(ui->rowSlider, &QSlider::valueChanged, this, [=](int value){ui->rowNumberLabel->setText(QString::number(value));});
     connect(ui->rowSlider, &QSlider::valueChanged, this, &PlotWindow::sliderIndexChanged);
     QTimer::singleShot(0, this, [this]() {emit ui->rowSlider->valueChanged(ui->rowSlider->value());});
@@ -82,14 +89,14 @@ void PlotWindow::updateLegendLayout() {
 }
 
 void PlotWindow::updateLegend() {
-    if(mode == Mode::NormalCurves || mode == Mode::SmoothedCurves){
+    if(defaultCurvesMode == DefaultCurvesMode::NormalCurves || defaultCurvesMode == DefaultCurvesMode::SmoothedCurves){
         ui->plotArea->graph(0)->setName("Original Image Curve");
         ui->plotArea->graph(1)->setName("Processed Image Curve");
         ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
         ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
         ui->plotArea->graph(1)->setVisible(true);
     }
-    else if(mode == Mode::DifferentialCurve || mode == Mode::DifferentialSmoothedCurve){
+    else if(defaultCurvesMode == DefaultCurvesMode::DifferentialCurve || defaultCurvesMode == DefaultCurvesMode::DifferentialSmoothedCurve){
         ui->plotArea->graph(0)->setName("Differential Curve");
         ui->plotArea->graph(0)->setPen(QPen(QColor(127, 183, 126)));
         ui->plotArea->graph(1)->setVisible(false);
@@ -106,53 +113,90 @@ void PlotWindow::setHorizontalAxis(const int &xAxis) {
     ui->plotArea->xAxis->setRange(0, xAxis);
 }
 
+void PlotWindow::lockRGBMode() {
+    ui->rgbModeCheckBox->setEnabled(false);
+}
+
+QString PlotWindow::getMode() const {
+    QString mode;
+    if(mainMode == MainMode::DefaultMode){
+        mode = "Default Mode";
+    }
+    else{
+        mode = "RGB mode";
+    }
+    return mode;
+}
+
 void PlotWindow::drawCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues) {
-    plotManager.setCurvesValues(origianlValues, processedValues);
-    QVector<double> x = plotManager.calculateHorizontalValues(origianlValues);
-    if(mode == Mode::NormalCurves){
-        ui->plotArea->graph(0)->setData(x, origianlValues);
-        ui->plotArea->graph(1)->setData(x, processedValues);
+    xAxis = plotManager.calculateHorizontalValues(origianlValues);
+    if(defaultCurvesMode == DefaultCurvesMode::NormalCurves){
+        ui->plotArea->graph(0)->setData(xAxis, origianlValues);
+        ui->plotArea->graph(1)->setData(xAxis, processedValues);
         ui->plotArea->graph(1)->setVisible(true);
     }
-    else if(mode == Mode::DifferentialCurve){
+    else if(defaultCurvesMode == DefaultCurvesMode::DifferentialCurve){
         QVector<double> y = plotManager.calculateDifferentialCurve(origianlValues, processedValues);
-        ui->plotArea->graph(0)->setData(x, y);
+        ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
     }
-    else if(mode == Mode::SmoothedCurves){
+    else if(defaultCurvesMode == DefaultCurvesMode::SmoothedCurves){
         auto [origianlValuesSmoothed, processedValuesSmoothed] = plotManager.calculateSmoothedCurves(origianlValues, processedValues);
-        ui->plotArea->graph(0)->setData(x, origianlValuesSmoothed);
-        ui->plotArea->graph(1)->setData(x, processedValuesSmoothed);
+        ui->plotArea->graph(0)->setData(xAxis, origianlValuesSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, processedValuesSmoothed);
         ui->plotArea->graph(1)->setVisible(true);
     }
-    else if(mode == Mode::DifferentialSmoothedCurve){
+    else if(defaultCurvesMode == DefaultCurvesMode::DifferentialSmoothedCurve){
         QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(origianlValues, processedValues);
-        ui->plotArea->graph(0)->setData(x, y);
+        ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
     }
     ui->plotArea->replot();
 }
 
-void PlotWindow::changeMode(const QString &mode) {
-    if(ui->modeDropDown->currentText() == "Default Curves"){
-        this->mode = Mode::NormalCurves;
+void PlotWindow::changeMainMode(bool checked) {
+    if(checked == true){
+        mainMode = MainMode::RGBMode;
+    }
+    else{
+        mainMode = MainMode::DefaultMode;
+    }
+    emit mainModeChanged();
+}
+
+void PlotWindow::changeCurvesMode(const QString &mode) {
+    if(mode == "Default Curves"){
+        defaultCurvesMode = DefaultCurvesMode::NormalCurves;
         sliderIndexChanged(ui->rowSlider->value());
         updateLegend();
     }
-    else if(ui->modeDropDown->currentText() == "Smothed Curves"){
-        this->mode = Mode::SmoothedCurves;
+    else if(mode == "Smothed Curves"){
+        defaultCurvesMode = DefaultCurvesMode::SmoothedCurves;
         sliderIndexChanged(ui->rowSlider->value());
         updateLegend();
     }
-    else if(ui->modeDropDown->currentText() == "Differental Curve"){
-        this->mode = Mode::DifferentialCurve;
+    else if(mode == "Differental Curve"){
+        defaultCurvesMode = DefaultCurvesMode::DifferentialCurve;
         sliderIndexChanged(ui->rowSlider->value());
         updateLegend();
     }
-    else if(ui->modeDropDown->currentText() == "Smoothed Differental Curve"){
-        this->mode = Mode::DifferentialSmoothedCurve;
+    else if(mode == "Smoothed Differental Curve"){
+        defaultCurvesMode = DefaultCurvesMode::DifferentialSmoothedCurve;
         sliderIndexChanged(ui->rowSlider->value());
         updateLegend();
+    }
+}
+
+void PlotWindow::fillModeDropDown() {
+    ui->modeDropDown->clear();
+    if(mainMode == MainMode::RGBMode){
+        ui->modeDropDown->addItems({"Normal RGB Curves", "Smoothed RGB Curves", "Differential RGB Curves", "Differential Smoothed RGB Curves",
+                                    "Normal Red Curves", "Smoothed Red Curves", "Differential Red Curve", "Differential Smoothed Red Curve",
+                                    "Normal Green Curves", "Smoothed Green Curves", "Differential Green Curve", "Differential Smoothed Green Curve",
+                                    "Normal Blue Curves", "Smoothed Blue Curves", "Differential Blue Curve", "Differential Smoothed Blue Curve"});
+    }
+    else{
+        ui->modeDropDown->addItems({"Default Curves", "Smothed Curves", "Differental Curve", "Smoothed Differental Curve"});
     }
 }
 

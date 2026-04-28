@@ -16,6 +16,10 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+public:
+    enum Mode {DefaultMode, ResizingMode};
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 private:
     Ui::MainWindow *ui;
     CustomView *view = nullptr;
@@ -24,10 +28,7 @@ private:
     ImageIO userImageIO;
     QSettings settings;
     bool imagesLoaded = false;
-    QString theme;
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    Mode mode;
 public slots:
     void callSearch();
     void callProcess();
@@ -36,8 +37,10 @@ public slots:
     void imageDropped(const QString& path);
     void saveImage(const QString& name, const QString& extension, const QImage& image);
     void changeButtonsState();
-    void fillFiltersDropdown(bool checked);
-
+    void fillFiltersDropdown();
+    void changeMode(bool checked);
+signals:
+    void filtersModeChanged();
 };
 
 #endif // MAINWINDOW_H
