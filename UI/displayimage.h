@@ -17,7 +17,7 @@ class DisplayImage : public QDialog {
 private:
     Ui::DisplayImage *ui;
     SaveImage *saveWinodw = nullptr;
-    PlotWindow *plotWinodw = nullptr;
+    PlotWindow *plotWindow = nullptr;
     WheelEvent *view = nullptr;
     ImageToSignalManager imageToSignalManager;
     QImage processedImage;
@@ -43,7 +43,10 @@ public slots:
 signals:
     void saveRequest(const QString& name, const QString& extension, const QImage& image);
     void imagesLoaded();
-    void valuesCalculated(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    void grayScaledValuesCalculated(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    void rgbValuesCalculated(const std::pair< QVector<double>&, const QVector<double>&> red,
+                             const std::pair< QVector<double>&, const QVector<double>&> green,
+                             const std::pair< QVector<double>&, const QVector<double>&> blue);
 
 };
 

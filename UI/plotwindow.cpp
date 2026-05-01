@@ -5,7 +5,7 @@
 PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow), plotManager(PlotManager()),
                                                                             mainMode(MainMode::DefaultMode),
                                                                             defaultCurvesMode(DefaultCurvesMode::NormalCurves),
-                                                                            rgbCurvesMode(RGBCurvesMode::NormalRBGCurves) {
+                                                                            rgbCurvesMode(RGBCurvesMode::OriginalRGBCurves) {
     ui->setupUi(this);
     ui->plotArea->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     ui->plotArea->yAxis->setRange(0, 255);
@@ -21,11 +21,13 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     setTheme();
     ui->plotArea->addGraph();
     ui->plotArea->addGraph();
+    ui->plotArea->addGraph();
 
     ui->plotArea->graph(0)->setName("Original Image Curve");
     ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
     ui->plotArea->graph(1)->setName("Processed Image Curve");
     ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
+    ui->plotArea->graph(2)->setVisible(false);
 
     setLegend();
     updateLegendLayout();
@@ -89,22 +91,101 @@ void PlotWindow::updateLegendLayout() {
 }
 
 void PlotWindow::updateLegend() {
-    if(defaultCurvesMode == DefaultCurvesMode::NormalCurves || defaultCurvesMode == DefaultCurvesMode::SmoothedCurves){
-        ui->plotArea->graph(0)->setName("Original Image Curve");
-        ui->plotArea->graph(1)->setName("Processed Image Curve");
-        ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
-        ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
-        ui->plotArea->graph(1)->setVisible(true);
+    if(mainMode == MainMode::DefaultMode) {
+        if(defaultCurvesMode == DefaultCurvesMode::NormalCurves || defaultCurvesMode == DefaultCurvesMode::SmoothedCurves){
+            ui->plotArea->graph(0)->setName("Original Image Curve");
+            ui->plotArea->graph(1)->setName("Processed Image Curve");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(79, 191, 190)));
+            ui->plotArea->graph(1)->setPen(QPen(QColor(224, 122, 95)));
+
+            ui->plotArea->graph(1)->setVisible(true);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+        if(defaultCurvesMode == DefaultCurvesMode::DifferentialCurve || defaultCurvesMode == DefaultCurvesMode::DifferentialSmoothedCurve) {
+            ui->plotArea->graph(0)->setName("Differential Curve");
+            ui->plotArea->graph(0)->setPen(QPen(QColor(127, 183, 126)));
+
+            ui->plotArea->graph(1)->setVisible(false);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
     }
-    else if(defaultCurvesMode == DefaultCurvesMode::DifferentialCurve || defaultCurvesMode == DefaultCurvesMode::DifferentialSmoothedCurve){
-        ui->plotArea->graph(0)->setName("Differential Curve");
-        ui->plotArea->graph(0)->setPen(QPen(QColor(127, 183, 126)));
-        ui->plotArea->graph(1)->setVisible(false);
+    else {
+        if(rgbCurvesMode == RGBCurvesMode::OriginalRGBCurves || rgbCurvesMode == RGBCurvesMode::ProcessedRGBCurves ||
+            rgbCurvesMode == RGBCurvesMode::OriginalSmoothedRGBCurves || rgbCurvesMode == RGBCurvesMode::ProcessedSmoothedRGBCurves) {
+            ui->plotArea->graph(0)->setName("Red Curve");
+            ui->plotArea->graph(1)->setName("Green Curve");
+            ui->plotArea->graph(2)->setName("Blue Curve");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(214, 102, 102)));
+            ui->plotArea->graph(1)->setPen(QPen(QColor(102, 179, 140)));
+            ui->plotArea->graph(2)->setPen(QPen(QColor(100, 149, 237)));
+
+            ui->plotArea->graph(0)->setVisible(true);
+            ui->plotArea->graph(1)->setVisible(true);
+            ui->plotArea->graph(2)->setVisible(true);
+        }
+
+        else if(rgbCurvesMode == RGBCurvesMode::NormalRedCurves || rgbCurvesMode == RGBCurvesMode::SmoothedRedCurves){
+            ui->plotArea->graph(0)->setName("Original Red Curves");
+            ui->plotArea->graph(1)->setName("Processed Red Curves");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(214, 102, 102)));
+            ui->plotArea->graph(1)->setPen(QPen(QColor(170, 70, 70)));
+
+            ui->plotArea->graph(1)->setVisible(true);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+        else if(rgbCurvesMode == RGBCurvesMode::DifferentialRedCurve || rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedRedCurve){
+            ui->plotArea->graph(0)->setName("Differential Red Curve");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(214, 102, 102)));
+
+            ui->plotArea->graph(1)->setVisible(false);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+
+        else if(rgbCurvesMode == RGBCurvesMode::NormalGreenCurves || rgbCurvesMode == RGBCurvesMode::SmoothedGreenCurves){
+            ui->plotArea->graph(0)->setName("Original Green Curves");
+            ui->plotArea->graph(1)->setName("Processed Green Curves");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(102, 179, 140)));
+            ui->plotArea->graph(1)->setPen(QPen(QColor(70, 140, 110)));
+
+            ui->plotArea->graph(1)->setVisible(true);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+        else if(rgbCurvesMode == RGBCurvesMode::DifferentialGreenCurve || rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedGreenCurve){
+            ui->plotArea->graph(0)->setName("Differential Green Curve");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(102, 179, 140)));
+
+            ui->plotArea->graph(1)->setVisible(false);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+
+        else if(rgbCurvesMode == RGBCurvesMode::NormalBlueCurves || rgbCurvesMode == RGBCurvesMode::SmoothedBlueCurves){
+            ui->plotArea->graph(0)->setName("Original Blue Curves");
+            ui->plotArea->graph(1)->setName("Processed Blue Curves");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(100, 149, 237)));
+            ui->plotArea->graph(1)->setPen(QPen(QColor(65, 105, 200)));
+
+            ui->plotArea->graph(1)->setVisible(true);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
+        else if(rgbCurvesMode == RGBCurvesMode::DifferentialBlueCurve || rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedBlueCurve){
+            ui->plotArea->graph(0)->setName("Differential Blue Curve");
+
+            ui->plotArea->graph(0)->setPen(QPen(QColor(100, 149, 237)));
+
+            ui->plotArea->graph(1)->setVisible(false);
+            ui->plotArea->graph(2)->setVisible(false);
+        }
     }
     updateLegendLayout();
     ui->plotArea->replot();
 }
-
 void PlotWindow::setRowSliderRange(const int &value) {
     ui->rowSlider->setMaximum(value);
 }
@@ -128,7 +209,7 @@ QString PlotWindow::getMode() const {
     return mode;
 }
 
-void PlotWindow::drawCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues) {
+void PlotWindow::drawGrayScaledCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues) {
     xAxis = plotManager.calculateHorizontalValues(origianlValues);
     if(defaultCurvesMode == DefaultCurvesMode::NormalCurves){
         ui->plotArea->graph(0)->setData(xAxis, origianlValues);
@@ -151,6 +232,124 @@ void PlotWindow::drawCurves(const QVector<double>& origianlValues, const QVector
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
     }
+    ui->plotArea->replot();
+}
+
+void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<double> &> red,
+                               const std::pair<QVector<double> &, const QVector<double> &> green,
+                               const std::pair<QVector<double> &, const QVector<double> &> blue){
+    auto [originalRed, processedRed] = red;
+    auto [originalGreen, processedGreen] = green;
+    auto [originalBlue, processedBlue] = blue;
+
+    auto [originalRedSmoothed, processedRedSmoothed] = plotManager.calculateSmoothedCurves(originalRed, processedRed);
+    auto [originalGreenSmoothed, processedGreenSmoothed] = plotManager.calculateSmoothedCurves(originalGreen, processedGreen);
+    auto [originalBlueSmoothed, processedBlueSmoothed] = plotManager.calculateSmoothedCurves(originalBlue, processedBlue);
+
+    if(rgbCurvesMode == RGBCurvesMode::OriginalRGBCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalRed);
+        ui->plotArea->graph(1)->setData(xAxis, originalGreen);
+        ui->plotArea->graph(2)->setData(xAxis, originalBlue);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(true);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::ProcessedRGBCurves){
+        ui->plotArea->graph(0)->setData(xAxis, processedRed);
+        ui->plotArea->graph(1)->setData(xAxis, processedGreen);
+        ui->plotArea->graph(2)->setData(xAxis, processedBlue);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(true);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::OriginalSmoothedRGBCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalRedSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, originalGreenSmoothed);
+        ui->plotArea->graph(2)->setData(xAxis, originalBlueSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(true);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::ProcessedSmoothedRGBCurves){
+        ui->plotArea->graph(0)->setData(xAxis, processedRedSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, processedGreenSmoothed);
+        ui->plotArea->graph(2)->setData(xAxis, processedBlueSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(true);
+    }
+
+    else if(rgbCurvesMode == RGBCurvesMode::NormalRedCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalRed);
+        ui->plotArea->graph(1)->setData(xAxis, processedRed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::SmoothedRedCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalRedSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, processedRedSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialRedCurve){
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalRed, processedRed);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedRedCurve){
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalRed, processedRed);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+
+    else if(rgbCurvesMode == RGBCurvesMode::NormalGreenCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalGreen);
+        ui->plotArea->graph(1)->setData(xAxis, processedGreen);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::SmoothedGreenCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalGreenSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, processedGreenSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialGreenCurve){
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalGreen, processedGreen);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedGreenCurve){
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalGreen, processedGreen);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+
+    else if(rgbCurvesMode == RGBCurvesMode::NormalBlueCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalBlue);
+        ui->plotArea->graph(1)->setData(xAxis, processedBlue);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::SmoothedBlueCurves){
+        ui->plotArea->graph(0)->setData(xAxis, originalBlueSmoothed);
+        ui->plotArea->graph(1)->setData(xAxis, processedBlueSmoothed);
+        ui->plotArea->graph(1)->setVisible(true);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialBlueCurve){
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalBlue, processedBlue);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+    else if(rgbCurvesMode == RGBCurvesMode::DifferentialSmoothedBlueCurve){
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalBlue, processedBlue);
+        ui->plotArea->graph(0)->setData(xAxis, y);
+        ui->plotArea->graph(1)->setVisible(false);
+        ui->plotArea->graph(2)->setVisible(false);
+    }
+
     ui->plotArea->replot();
 }
 
@@ -185,12 +384,97 @@ void PlotWindow::changeCurvesMode(const QString &mode) {
         sliderIndexChanged(ui->rowSlider->value());
         updateLegend();
     }
+
+
+    else if(mode == "Original RGB Curves"){
+        rgbCurvesMode = RGBCurvesMode::OriginalRGBCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Processed RGB Curves"){
+        rgbCurvesMode = RGBCurvesMode::ProcessedRGBCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Original Smoothed RGB Curves"){
+        rgbCurvesMode = RGBCurvesMode::OriginalSmoothedRGBCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Processed Smoothed RGB Curves"){
+        rgbCurvesMode = RGBCurvesMode::ProcessedSmoothedRGBCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+
+    else if(mode == "Normal Red Curves"){
+        rgbCurvesMode = RGBCurvesMode::NormalRedCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Smoothed Red Curves"){
+        rgbCurvesMode = RGBCurvesMode::SmoothedRedCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Red Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialRedCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Smoothed Red Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialSmoothedRedCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+
+    else if(mode == "Normal Green Curves"){
+        rgbCurvesMode = RGBCurvesMode::NormalGreenCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Smoothed Green Curves"){
+        rgbCurvesMode = RGBCurvesMode::SmoothedGreenCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Green Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialGreenCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Smoothed Green Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialSmoothedGreenCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+
+    else if(mode == "Normal Blue Curves"){
+        rgbCurvesMode = RGBCurvesMode::NormalBlueCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Smoothed Blue Curves"){
+        rgbCurvesMode = RGBCurvesMode::SmoothedBlueCurves;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Blue Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialBlueCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
+    else if(mode == "Differential Smoothed Blue Curve"){
+        rgbCurvesMode = RGBCurvesMode::DifferentialSmoothedBlueCurve;
+        sliderIndexChanged(ui->rowSlider->value());
+        updateLegend();
+    }
 }
 
 void PlotWindow::fillModeDropDown() {
     ui->modeDropDown->clear();
     if(mainMode == MainMode::RGBMode){
-        ui->modeDropDown->addItems({"Normal RGB Curves", "Smoothed RGB Curves", "Differential RGB Curves", "Differential Smoothed RGB Curves",
+        ui->modeDropDown->addItems({"Original RGB Curves", "Processed RGB Curves", "Original Smoothed RGB Curves", "Processed Smoothed RGB Curves",
                                     "Normal Red Curves", "Smoothed Red Curves", "Differential Red Curve", "Differential Smoothed Red Curve",
                                     "Normal Green Curves", "Smoothed Green Curves", "Differential Green Curve", "Differential Smoothed Green Curve",
                                     "Normal Blue Curves", "Smoothed Blue Curves", "Differential Blue Curve", "Differential Smoothed Blue Curve"});

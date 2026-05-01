@@ -12,7 +12,8 @@ class PlotWindow : public QDialog {
 public:
     enum MainMode {DefaultMode, RGBMode};
     enum DefaultCurvesMode {NormalCurves, SmoothedCurves, DifferentialCurve, DifferentialSmoothedCurve};
-    enum RGBCurvesMode {NormalRBGCurves, SmoothedRGBCurves, DifferentialRBGCurves, DifferentialSmoothedRGBCurve,
+
+    enum RGBCurvesMode {OriginalRGBCurves, ProcessedRGBCurves, OriginalSmoothedRGBCurves, ProcessedSmoothedRGBCurves,
                         NormalRedCurves, SmoothedRedCurves, DifferentialRedCurve, DifferentialSmoothedRedCurve,
                         NormalGreenCurves, SmoothedGreenCurves, DifferentialGreenCurve, DifferentialSmoothedGreenCurve,
                         NormalBlueCurves, SmoothedBlueCurves, DifferentialBlueCurve, DifferentialSmoothedBlueCurve};
@@ -34,7 +35,10 @@ private:
     DefaultCurvesMode defaultCurvesMode;
     RGBCurvesMode rgbCurvesMode;
 public slots:
-    void drawCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    void drawGrayScaledCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues);
+    void drawRBGCurves(const std::pair< QVector<double>&, const QVector<double>&> red,
+                       const std::pair< QVector<double>&, const QVector<double>&> green,
+                       const std::pair< QVector<double>&, const QVector<double>&> blue);
     void changeMainMode(bool checked);
     void changeCurvesMode(const QString &mode);
     void fillModeDropDown();

@@ -42,7 +42,7 @@ void DisplayImage::setExtensions(const QStringList &extensions) {
 
 void DisplayImage::checkProcessedImage() {
     if(processedImage.format() == QImage::Format_Grayscale8){
-        plotWinodw->lockRGBMode();
+        plotWindow->lockRGBMode();
     }
 }
 
@@ -72,21 +72,29 @@ void DisplayImage::callOriginalImage(){
 }
 
 void DisplayImage::callCurveAnalysis() {
-    plotWinodw = new PlotWindow(this);
-    plotWinodw->setRowSliderRange(originalImage.height()-1);
-    plotWinodw->setHorizontalAxis(originalImage.width());
-    plotWinodw->setAttribute(Qt::WA_DeleteOnClose);
-    connect(plotWinodw, &QObject::destroyed, this, [this]() {plotWinodw = nullptr;});
-    connect(plotWinodw, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateValues);
-    connect(this, &DisplayImage::valuesCalculated, plotWinodw, &PlotWindow::drawCurves);
+    plotWindow = new PlotWindow(this);
+    plotWindow->setRowSliderRange(originalImage.height()-1);
+    plotWindow->setHorizontalAxis(originalImage.width());
+    plotWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(plotWindow, &QObject::destroyed, this, [this]() {plotWindow = nullptr;});
+    connect(plotWindow, &PlotWindow::sliderIndexChanged, this, &DisplayImage::calculateValues);
+    connect(this, &DisplayImage::grayScaledValuesCalculated, plotWindow, &PlotWindow::drawGrayScaledCurves);
+    connect(this, &DisplayImage::rgbValuesCalculated, plotWindow, &PlotWindow::drawRBGCurves);
     checkProcessedImage();
-    plotWinodw->exec();
+    plotWindow->exec();
 }
 
 void DisplayImage::calculateValues(const int &index){
-    QVector<double> originalValues = imageToSignalManager.getOriginalGrayScaledImageRowValues(index);
-    QVector<double> processeValues = imageToSignalManager.getProcessedGrayScaledImageRowValues(index);
-    emit valuesCalculated(originalValues, processeValues);
+    if(plotWindow->getMode() == "RGB mode"){
+        auto [originalRed, originalGreen, originalBlue] = imageToSignalManager.getOriginalRGBImageRowValues(index);
+        auto [processedRed, processedGreen, processedBlue] = imageToSignalManager.getProcessedRGBImageRowValues(index);
+        emit rgbValuesCalculated({originalRed, processedRed}, {originalGreen, processedGreen}, {originalBlue, processedBlue});
+    }
+    else{
+        QVector<double> originalValues = imageToSignalManager.getOriginalGrayScaledImageRowValues(index);
+        QVector<double> processeValues = imageToSignalManager.getProcessedGrayScaledImageRowValues(index);
+        emit grayScaledValuesCalculated(originalValues, processeValues);
+    }
 }
 
 void DisplayImage::callClose() {
