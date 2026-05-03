@@ -16,11 +16,8 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-public:
-    enum Mode {DefaultMode, ResizingMode};
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 private:
+    enum Mode {DefaultMode, ResizingMode};
     Ui::MainWindow *ui;
     CustomView *view = nullptr;
     DisplayImage *displayWindow = nullptr;
@@ -29,6 +26,9 @@ private:
     QSettings settings;
     bool imagesLoaded = false;
     Mode mode;
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 public slots:
     void callSearch();
     void callProcess();

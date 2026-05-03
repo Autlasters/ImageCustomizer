@@ -57,5 +57,19 @@ std::pair<QVector<double>, QVector<double> > PlotManager::calculateSmoothedCurve
     return {originalValuesSmoothed, processedValuesSmoothed};
 }
 
+QVector<double> PlotManager::linearInterpolation(const QVector<double>& values, const int &size) {
+    QVector<double> result(size);
+    int inputSize = values.size();
+    for (int i = 0; i < size; ++i) {
+        double ratio = (double)i / (size - 1);
+        double position = ratio * (inputSize - 1);
+        int left = floor(position);
+        int right = ceil(position);
+        double t = position - left;
+        result[i] = (1 - t) * values[left] + t * values[right];
+    }
+    return result;
+}
+
 
 

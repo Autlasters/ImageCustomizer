@@ -24,11 +24,10 @@ private:
     QImage originalImage;
     QStringList extensions;
     bool savePermission;
-    bool curvesAnalysisPermission;
 public:
     explicit DisplayImage(QWidget *parent = nullptr);
     void setImages(const QImage& processedImage, const QImage& originalImage);
-    void setPermissons(bool savePermission, bool curvesAnalysisPermission);
+    void setPermission(bool savePermission);
     void setExtensions(const QStringList& extensions);
     const QStringList& getExtensions(const QStringList& extensions) const;
     void checkProcessedImage();

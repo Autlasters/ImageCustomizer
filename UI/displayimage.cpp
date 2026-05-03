@@ -26,11 +26,9 @@ void DisplayImage::setImages(const QImage& processedImage, const QImage& origina
     emit imagesLoaded();
 }
 
-void DisplayImage::setPermissons(bool savePermission, bool curvesAnalysisPermission) {
+void DisplayImage::setPermission(bool savePermission) {
     this->savePermission = savePermission;
-    this->curvesAnalysisPermission = curvesAnalysisPermission;
     ui->saveButton->setEnabled(this->savePermission);
-    ui->curvesAnalysisButton->setEnabled(this->curvesAnalysisPermission);
 }
 
 void DisplayImage::setExtensions(const QStringList &extensions) {

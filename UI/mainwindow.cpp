@@ -64,15 +64,12 @@ void MainWindow::callProcess() {
     connect(displayWindow, &QObject::destroyed, this, [this]() {displayWindow = nullptr;});
     connect(displayWindow, &DisplayImage::saveRequest, this, &MainWindow::saveImage);
 
-    bool savePermision = false;
+    bool savePermission = false;
     if(!ui->DisplayFolderPathField->text().isEmpty()){
-        savePermision = true;
+        savePermission = true;
     }
-    bool curveAnalysisPermision = false;
-    if(!ui->resizecheckBox->isChecked()){
-        curveAnalysisPermision = true;
-    }
-    displayWindow->setPermissons(savePermision, curveAnalysisPermision);
+
+    displayWindow->setPermission(savePermission);
     displayWindow->setImages(Converter::MatToQImge(imageManager.getProcessedImage()), Converter::MatToQImge(imageManager.getOriginalImage()));
     displayWindow->setExtensions(userImageIO.getExtensions());
     displayWindow->show();
