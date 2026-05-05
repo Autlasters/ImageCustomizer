@@ -212,32 +212,30 @@ QString PlotWindow::getMode() const {
 
 void PlotWindow::drawGrayScaledCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues) {
     xAxis = plotManager.calculateHorizontalValues(origianlValues);
-    /*QVector<double> processedValuesToPlot = processedValues;
-    if(origianlValues.size() != processedValues.size()){
-        processedValuesToPlot = plotManager.linearInterpolation(processedValues, origianlValues.size());
-    }*/
+    QVector<double> currentProcessedValues = (origianlValues.size() != processedValues.size())
+                                                ? plotManager.linearInterpolation(processedValues, origianlValues.size()) : processedValues;
     switch(defaultCurvesMode){
     case DefaultCurvesMode::NormalCurves:{
         ui->plotArea->graph(0)->setData(xAxis, origianlValues);
-        ui->plotArea->graph(1)->setData(xAxis, processedValues);
+        ui->plotArea->graph(1)->setData(xAxis, currentProcessedValues);
         ui->plotArea->graph(1)->setVisible(true);
         break;
     }
     case DefaultCurvesMode::DifferentialCurve:{
-        QVector<double> y = plotManager.calculateDifferentialCurve(origianlValues, processedValues);
+        QVector<double> y = plotManager.calculateDifferentialCurve(origianlValues, currentProcessedValues);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         break;
     }
     case DefaultCurvesMode::SmoothedCurves:{
-        auto [origianlValuesSmoothed, processedValuesSmoothed] = plotManager.calculateSmoothedCurves(origianlValues, processedValues);
+        auto [origianlValuesSmoothed, processedValuesSmoothed] = plotManager.calculateSmoothedCurves(origianlValues, currentProcessedValues);
         ui->plotArea->graph(0)->setData(xAxis, origianlValuesSmoothed);
         ui->plotArea->graph(1)->setData(xAxis, processedValuesSmoothed);
         ui->plotArea->graph(1)->setVisible(true);
         break;
     }
     case DefaultCurvesMode::DifferentialSmoothedCurve:{
-        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(origianlValues, processedValues);
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(origianlValues, currentProcessedValues);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         break;
@@ -250,21 +248,21 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
                                const std::pair<QVector<double> &, const QVector<double> &> green,
                                const std::pair<QVector<double> &, const QVector<double> &> blue){
 
-    /*auto interpolation = [&](const QVector<double>& values, const int& size){
+    auto interpolation = [&](const QVector<double>& values, const int& size){
         return (values.size() != size) ? plotManager.linearInterpolation(values, size) : values;
-    };*/
+    };
 
     auto [originalRed, processedRed] = red;
     auto [originalGreen, processedGreen] = green;
     auto [originalBlue, processedBlue] = blue;
 
-    /*QVector<double> processedRedToPlot = interpolation(processedRed, originalRed.size());
-    QVector<double> processedGreenToPlot = interpolation(processedGreen, originalGreen.size());
-    QVector<double> processedBlueToPlot = interpolation(processedBlue, originalBlue.size());*/
+    QVector<double> currentProcessedRed = interpolation(processedRed, originalRed.size());
+    QVector<double> currentProcessedGreen = interpolation(processedGreen, originalGreen.size());
+    QVector<double> currentProcessedBlue = interpolation(processedBlue, originalBlue.size());
 
-    auto [originalRedSmoothed, processedRedSmoothed] = plotManager.calculateSmoothedCurves(originalRed, processedRed);
-    auto [originalGreenSmoothed, processedGreenSmoothed] = plotManager.calculateSmoothedCurves(originalGreen, processedGreen);
-    auto [originalBlueSmoothed, processedBlueSmoothed] = plotManager.calculateSmoothedCurves(originalBlue, processedBlue);
+    auto [originalRedSmoothed, processedRedSmoothed] = plotManager.calculateSmoothedCurves(originalRed, currentProcessedRed);
+    auto [originalGreenSmoothed, processedGreenSmoothed] = plotManager.calculateSmoothedCurves(originalGreen, currentProcessedGreen);
+    auto [originalBlueSmoothed, processedBlueSmoothed] = plotManager.calculateSmoothedCurves(originalBlue, currentProcessedBlue);
 
     xAxis = plotManager.calculateHorizontalValues(originalRed);
     switch(rgbCurvesMode){
@@ -278,9 +276,9 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
         break;
     }
     case RGBCurvesMode::ProcessedRGBCurves:{
-        ui->plotArea->graph(0)->setData(xAxis, processedRed);
-        ui->plotArea->graph(1)->setData(xAxis, processedGreen);
-        ui->plotArea->graph(2)->setData(xAxis, processedBlue);
+        ui->plotArea->graph(0)->setData(xAxis, currentProcessedRed);
+        ui->plotArea->graph(1)->setData(xAxis, currentProcessedGreen);
+        ui->plotArea->graph(2)->setData(xAxis, currentProcessedBlue);
         ui->plotArea->graph(1)->setVisible(true);
         ui->plotArea->graph(2)->setVisible(true);
         break;
@@ -305,7 +303,7 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
     //Red Curves
     case RGBCurvesMode::NormalRedCurves:{
         ui->plotArea->graph(0)->setData(xAxis, originalRed);
-        ui->plotArea->graph(1)->setData(xAxis, processedRed);
+        ui->plotArea->graph(1)->setData(xAxis, currentProcessedRed);
         ui->plotArea->graph(1)->setVisible(true);
         ui->plotArea->graph(2)->setVisible(false);
         break;
@@ -318,14 +316,14 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
         break;
     }
     case RGBCurvesMode::DifferentialRedCurve:{
-        QVector<double> y = plotManager.calculateDifferentialCurve(originalRed, processedRed);
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalRed, currentProcessedRed);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);
         break;
     }
     case RGBCurvesMode::DifferentialSmoothedRedCurve:{
-        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalRed, processedRed);
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalRed, currentProcessedRed);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);
@@ -335,7 +333,7 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
     //Green Curves
     case RGBCurvesMode::NormalGreenCurves:{
         ui->plotArea->graph(0)->setData(xAxis, originalGreen);
-        ui->plotArea->graph(1)->setData(xAxis, processedGreen);
+        ui->plotArea->graph(1)->setData(xAxis, currentProcessedGreen);
         ui->plotArea->graph(1)->setVisible(true);
         ui->plotArea->graph(2)->setVisible(false);
         break;
@@ -348,14 +346,14 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
         break;
     }
     case RGBCurvesMode::DifferentialGreenCurve:{
-        QVector<double> y = plotManager.calculateDifferentialCurve(originalGreen, processedGreen);
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalGreen, currentProcessedGreen);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);
         break;
     }
     case RGBCurvesMode::DifferentialSmoothedGreenCurve:{
-        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalGreen, processedGreen);
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalGreen, currentProcessedGreen);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);
@@ -365,7 +363,7 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
     //Blue Curves
     case RGBCurvesMode::NormalBlueCurves:{
         ui->plotArea->graph(0)->setData(xAxis, originalBlue);
-        ui->plotArea->graph(1)->setData(xAxis, processedBlue);
+        ui->plotArea->graph(1)->setData(xAxis, currentProcessedBlue);
         ui->plotArea->graph(1)->setVisible(true);
         ui->plotArea->graph(2)->setVisible(false);
         break;
@@ -378,14 +376,14 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
         break;
     }
     case RGBCurvesMode::DifferentialBlueCurve:{
-        QVector<double> y = plotManager.calculateDifferentialCurve(originalBlue, processedBlue);
+        QVector<double> y = plotManager.calculateDifferentialCurve(originalBlue, currentProcessedBlue);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);
         break;
     }
     case RGBCurvesMode::DifferentialSmoothedBlueCurve:{
-        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalBlue, processedBlue);
+        QVector<double> y = plotManager.calculateDifferentialSmoothedCurve(originalBlue, currentProcessedBlue);
         ui->plotArea->graph(0)->setData(xAxis, y);
         ui->plotArea->graph(1)->setVisible(false);
         ui->plotArea->graph(2)->setVisible(false);

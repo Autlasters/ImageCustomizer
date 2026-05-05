@@ -83,14 +83,21 @@ void DisplayImage::callCurveAnalysis() {
 }
 
 void DisplayImage::calculateValues(const int &index){
+    int mappedIndex = index;
+    if(originalImage.height() != processedImage.height()){
+        double scale = static_cast<double>(processedImage.height())/static_cast<double>(originalImage.height());
+        mappedIndex = static_cast<int>(index*scale);
+        mappedIndex = std::min(mappedIndex, processedImage.height()-1);
+    }
+
     if(plotWindow->getMode() == "RGB mode"){
         auto [originalRed, originalGreen, originalBlue] = imageToSignalManager.getOriginalRGBImageRowValues(index);
-        auto [processedRed, processedGreen, processedBlue] = imageToSignalManager.getProcessedRGBImageRowValues(index);
+        auto [processedRed, processedGreen, processedBlue] = imageToSignalManager.getProcessedRGBImageRowValues(mappedIndex);
         emit rgbValuesCalculated({originalRed, processedRed}, {originalGreen, processedGreen}, {originalBlue, processedBlue});
     }
     else{
         QVector<double> originalValues = imageToSignalManager.getOriginalGrayScaledImageRowValues(index);
-        QVector<double> processeValues = imageToSignalManager.getProcessedGrayScaledImageRowValues(index);
+        QVector<double> processeValues = imageToSignalManager.getProcessedGrayScaledImageRowValues(mappedIndex);
         emit grayScaledValuesCalculated(originalValues, processeValues);
     }
 }
