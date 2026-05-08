@@ -27,7 +27,7 @@ void BlurFilter::apply(cv::Mat& image){
 
     /*applys the blure effect to the image, cv::Size(5,5) - size of the Kernel matrix, 3 - Gaussian kernel standard deviation in x direction
     for the bigger coeffitient, the stronger the blur effect*/
-    cv::GaussianBlur(image, result, cv::Size(5,5), 3);
+    cv::GaussianBlur(image, result, cv::Size(7,7), 3);
     image = result;
 }
 

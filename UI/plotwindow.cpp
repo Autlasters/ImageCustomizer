@@ -1,6 +1,9 @@
 #include "plotwindow.h"
 #include "ui_plotwindow.h"
+
 #include <opencv2/opencv.hpp>
+#include <QToolTip>
+#include <QMimeData>
 
 PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow), plotManager(PlotManager()), mainMode(MainMode::DefaultMode),
                                                                                 defaultCurvesMode(DefaultCurvesMode::NormalCurves),
@@ -32,6 +35,7 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     updateLegendLayout();
 
     connect(ui->closeButton, &QPushButton::clicked, this, &PlotWindow::callClose);
+    connect(ui->screenShotButton, &QPushButton::clicked, this, &PlotWindow::takeScreenShot);
     connect(ui->rgbModeCheckBox, &QCheckBox::toggled, this, &PlotWindow::changeMainMode);
     connect(ui->modeDropDown, &QComboBox::currentTextChanged, this, &PlotWindow::changeCurvesMode);
     connect(this, &PlotWindow::mainModeChanged, this, &PlotWindow::fillModeDropDown);
@@ -444,6 +448,18 @@ void PlotWindow::fillModeDropDown() {
         ui->modeDropDown->addItem("Differental Curve", DefaultCurvesMode::DifferentialCurve);
         ui->modeDropDown->addItem("Smoothed Differental Curve", DefaultCurvesMode::DifferentialSmoothedCurve);
     }
+}
+
+void PlotWindow::takeScreenShot() {
+    QString path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    QString screenShotName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".jpg";
+    QString fullPath = QDir(path).filePath(screenShotName);
+    QPixmap screenShot = ui->plotArea->grab();
+    screenShot.save(fullPath, "JPG");
+    QMimeData *data = new QMimeData();
+    data->setUrls({QUrl::fromLocalFile(fullPath)});
+    QApplication::clipboard()->setMimeData(data);
+    QToolTip::showText(QCursor::pos(), "Saved to clipboard");
 }
 
 void PlotWindow::callClose() {

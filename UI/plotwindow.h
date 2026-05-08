@@ -41,6 +41,7 @@ public slots:
     void changeMainMode(bool checked);
     void changeCurvesMode();
     void fillModeDropDown();
+    void takeScreenShot();
     void callClose();
 signals:
     void sliderIndexChanged(const int& index);
