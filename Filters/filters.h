@@ -93,4 +93,22 @@ public:
     QString getFilterName() const override;
 };
 
+//-----------------------------------------------------ColorSapce LAB Filter----------------------------------------------------
+class LABFilter: public Filter{
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------ColorSapce YCrCb Filter----------------------------------------------------
+class YCrCbFilter: public Filter{
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
+//-----------------------------------------------------ColorSapce HSV Filter----------------------------------------------------
+class HSVFilter: public Filter{
+    void apply(cv::Mat& image) override;
+    QString getFilterName() const override;
+};
+
 #endif // FILTERS_H

@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->DisplayFolderPathField->setReadOnly(true);
     ui->DisplayFolderPathField->setPlaceholderText("Click Search to chose the folder for the images saving");
     fillFiltersDropdown();
+    fillModeDropDown();
 
     QString savingFolderPath = settings.value("savingFolderPath", "").toString();
     if(!savingFolderPath.isEmpty() &&  QDir(savingFolderPath).exists()){
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
     connect(ui->filtersList, &QComboBox::currentIndexChanged, this, &MainWindow::changeButtonsState);
-    connect(ui->resizecheckBox, &QCheckBox::toggled, this, &MainWindow::changeMode);
+    connect(ui->modeDropdown, &QComboBox::currentIndexChanged, this, &MainWindow::changeMode);
     connect(this, &MainWindow::filtersModeChanged, this, &MainWindow::fillFiltersDropdown);
 
     view = ui->dragAndDropArea;
@@ -113,24 +114,35 @@ void MainWindow::changeButtonsState() {
 
 void MainWindow::fillFiltersDropdown() {
     ui->filtersList->clear();
-    if(mode == Mode::ResizingMode){
-        ui->filtersList->addItems(FiltersCollector::getAllResizingFilters());
-        ui->filtersList->setPlaceholderText("Dimensions");
-    }
-    else{
+    switch(mode){
+    case Mode::DefaultMode:{
         ui->filtersList->addItems(FiltersCollector::getAllDefaultFilters());
         ui->filtersList->setPlaceholderText("Filters");
+        break;
+    }
+    case Mode::ResizingMode:{
+        ui->filtersList->addItems(FiltersCollector::getAllResizingFilters());
+        ui->filtersList->setPlaceholderText("Dimensions");
+        break;
+    }
+    case Mode::ColorSpacesMode:{
+        ui->filtersList->addItems(FiltersCollector::getAllColorSpaceFilters());
+        ui->filtersList->setPlaceholderText("Color Spaces");
+        break;
+    }
     }
     ui->filtersList->setCurrentIndex(-1);
 }
 
-void MainWindow::changeMode(bool checked) {
-    if(checked == true){
-        mode = Mode::ResizingMode;
-    }
-    else{
-        mode = Mode::DefaultMode;
-    }
+void MainWindow::fillModeDropDown() {
+    ui->modeDropdown->addItem("Filters", Mode::DefaultMode);
+    ui->modeDropdown->addItem("Resizing", Mode::ResizingMode);
+    ui->modeDropdown->addItem("Color Spaces", Mode::ColorSpacesMode);
+}
+
+void MainWindow::changeMode() {
+    QVariant option = ui->modeDropdown->currentData();
+    mode = static_cast<Mode>(option.toInt());
     emit filtersModeChanged();
 }
 

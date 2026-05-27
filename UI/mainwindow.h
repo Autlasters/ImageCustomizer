@@ -17,7 +17,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 private:
-    enum Mode {DefaultMode, ResizingMode};
+    enum Mode {DefaultMode, ResizingMode, ColorSpacesMode};
     Ui::MainWindow *ui;
     CustomView *view = nullptr;
     DisplayImage *displayWindow = nullptr;
@@ -38,7 +38,8 @@ public slots:
     void saveImage(const QString& name, const QString& extension, const QImage& image);
     void changeButtonsState();
     void fillFiltersDropdown();
-    void changeMode(bool checked);
+    void fillModeDropDown();
+    void changeMode();
 signals:
     void filtersModeChanged();
 };

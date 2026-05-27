@@ -329,3 +329,59 @@ QString ResizingFilter::getFilterName() const {
 }
 
 
+//-----------------------------------------------------ColorSapce LAB Filter----------------------------------------------------
+void LABFilter::apply(cv::Mat &image) {
+    if(image.empty()){
+        return;
+    }
+    cv::Mat result;
+
+    /*converts the image colors forom BGR(BLUE, GREEN, RED) format to LAB Color space
+    L – Lightness(Intensity)
+    A – color component ranging from Green to Magenta
+    B – color component ranging from Blue to Yellow*/
+    cv::cvtColor(image, result, cv::COLOR_BGR2Lab);
+    image = result;
+}
+
+QString LABFilter::getFilterName() const {
+    return "LAB Filter";
+}
+
+//-----------------------------------------------------ColorSapce YCrCb Filter----------------------------------------------------
+void YCrCbFilter::apply(cv::Mat &image) {
+    if(image.empty()){
+        return;
+    }
+    cv::Mat result;
+
+    /*converts the image colors forom BGR(BLUE, GREEN, RED) format to YCrCb Color space
+    Y – Luminance component obtained from RGB after gamma correction
+    Cr = R – Y (how far is the red component from Luma)
+    Cb = B – Y (how far is the blue component from Luma)*/
+    cv::cvtColor(image, result, cv::COLOR_BGR2YCrCb);
+    image = result;
+}
+
+QString YCrCbFilter::getFilterName() const {
+    return "YCrCb Filter";
+}
+
+//-----------------------------------------------------ColorSapce HSV Filter----------------------------------------------------
+void HSVFilter::apply(cv::Mat &image) {
+    if(image.empty()){
+        return;
+    }
+    cv::Mat result;
+
+    /*converts the image colors forom BGR(BLUE, GREEN, RED) format to HSV Color space
+    H – Hue (Dominant Wavelength)
+    S – Saturation (Purity/shades of the color)
+    V – Value (Intensity)*/
+    cv::cvtColor(image, result, cv::COLOR_BGR2HSV);
+    image = result;
+}
+
+QString HSVFilter::getFilterName() const {
+    return "HSV Filter";
+}

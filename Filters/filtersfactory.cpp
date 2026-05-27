@@ -1,7 +1,7 @@
 #include "filtersfactory.h"
 
 std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
-    if(filterName == "Black and White"){
+    if(filterName == "Black&White"){
         return std::make_unique<BlackAndWhiteFilter>();
     }
     if(filterName == "Blur"){
@@ -30,6 +30,15 @@ std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     }
     if(filterName == "Pencil Sketch"){
         return std::make_unique<PencilSketchFilter>();
+    }
+    if(filterName == "LAB"){
+        return std::make_unique<LABFilter>();
+    }
+    if(filterName == "YCrCb"){
+        return std::make_unique<YCrCbFilter>();
+    }
+    if(filterName == "HSV"){
+        return std::make_unique<HSVFilter>();
     }
     return nullptr;
 }

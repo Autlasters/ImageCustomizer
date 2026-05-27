@@ -37,7 +37,7 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     connect(ui->closeButton, &QPushButton::clicked, this, &PlotWindow::callClose);
     connect(ui->screenShotButton, &QPushButton::clicked, this, &PlotWindow::takeScreenShot);
     connect(ui->rgbModeCheckBox, &QCheckBox::toggled, this, &PlotWindow::changeMainMode);
-    connect(ui->modeDropDown, &QComboBox::currentTextChanged, this, &PlotWindow::changeCurvesMode);
+    connect(ui->modeDropDown, &QComboBox::currentIndexChanged, this, &PlotWindow::changeCurvesMode);
     connect(this, &PlotWindow::mainModeChanged, this, &PlotWindow::fillModeDropDown);
     connect(ui->rowSlider, &QSlider::valueChanged, this, [=](int value){ui->rowNumberLabel->setText(QString::number(value));});
     connect(ui->rowSlider, &QSlider::valueChanged, this, &PlotWindow::sliderIndexChanged);
@@ -443,18 +443,18 @@ void PlotWindow::fillModeDropDown() {
         ui->modeDropDown->addItem("Differential Smoothed Blue Curve", RGBCurvesMode::DifferentialSmoothedBlueCurve);
     }
     else{
-        ui->modeDropDown->addItem("Default Curves", DefaultCurvesMode::NormalCurves);
-        ui->modeDropDown->addItem("Smothed Curves", DefaultCurvesMode::SmoothedCurves);
-        ui->modeDropDown->addItem("Differental Curve", DefaultCurvesMode::DifferentialCurve);
-        ui->modeDropDown->addItem("Smoothed Differental Curve", DefaultCurvesMode::DifferentialSmoothedCurve);
+        ui->modeDropDown->addItem("Normal Curves", DefaultCurvesMode::NormalCurves);
+        ui->modeDropDown->addItem("Smoothed Curves", DefaultCurvesMode::SmoothedCurves);
+        ui->modeDropDown->addItem("Differential Curve", DefaultCurvesMode::DifferentialCurve);
+        ui->modeDropDown->addItem("Differential Smoothed Curve", DefaultCurvesMode::DifferentialSmoothedCurve);
     }
 }
 
 void PlotWindow::takeScreenShot() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
-    QString screenShotName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".jpg";
+    QString screenShotName = ui->modeDropDown->currentText() + ".jpg";
     QString fullPath = QDir(path).filePath(screenShotName);
-    QPixmap screenShot = ui->plotArea->grab();
+    QPixmap screenShot = ui->plotArea->toPixmap(1920, 1080);
     screenShot.save(fullPath, "JPG");
     QMimeData *data = new QMimeData();
     data->setUrls({QUrl::fromLocalFile(fullPath)});
