@@ -1,12 +1,23 @@
+/*
+ * displayimage.cpp
+ *
+ * This source file implements the logic of the methods of the class WheelEvent
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include <QScrollBar>
 #include "wheelevent.h"
 
+//Constructor
 WheelEvent::WheelEvent(QWidget *parent): QGraphicsView(parent), scene(new QGraphicsScene(this)) {
     setScene(scene);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
+//Wheel event
 void WheelEvent::wheelEvent(QWheelEvent *event){
     setTransformationAnchor(AnchorUnderMouse);
     qreal scaleFactor = 1.5;
@@ -24,6 +35,7 @@ void WheelEvent::wheelEvent(QWheelEvent *event){
     }
 }
 
+//MousePress event
 void WheelEvent::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton){
         allowMoving = true;
@@ -33,6 +45,7 @@ void WheelEvent::mousePressEvent(QMouseEvent *event) {
     QGraphicsView::mousePressEvent(event);
 }
 
+//MouseRelease event
 void WheelEvent::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton){
         allowMoving = false;
@@ -41,6 +54,7 @@ void WheelEvent::mouseReleaseEvent(QMouseEvent *event) {
     QGraphicsView::mouseReleaseEvent(event);
 }
 
+//MouseMove event
 void WheelEvent::mouseMoveEvent(QMouseEvent *event) {
     if (currentScale <= minimalScale){
         return;
@@ -54,6 +68,7 @@ void WheelEvent::mouseMoveEvent(QMouseEvent *event) {
     QGraphicsView::mouseMoveEvent(event);
 }
 
+//Resize event
 void WheelEvent::resizeEvent(QResizeEvent *event) {
     QGraphicsView::resizeEvent(event);
     if(!scene || scene->items().isEmpty()){
@@ -62,6 +77,7 @@ void WheelEvent::resizeEvent(QResizeEvent *event) {
     setMinimalScale();
 }
 
+//Show event
 void WheelEvent::showEvent(QShowEvent *event) {
     QGraphicsView::showEvent(event);
     if(!scene || scene->items().isEmpty()){
@@ -70,6 +86,7 @@ void WheelEvent::showEvent(QShowEvent *event) {
     setMinimalScale();
 }
 
+//Method to set the minimum zooming scale
 void WheelEvent::setMinimalScale() {
     QRectF sceneRect = scene->sceneRect();
     QRectF viewRect = viewport()->rect();
@@ -81,6 +98,7 @@ void WheelEvent::setMinimalScale() {
     currentScale = minimalScale;
 }
 
+//Method to set an image
 void WheelEvent::setImage(const QImage &image) {
     QPixmap pixmap = QPixmap::fromImage(image);
     scene->clear();
@@ -90,6 +108,7 @@ void WheelEvent::setImage(const QImage &image) {
     setMinimalScale();
 }
 
+//Method to clean the display field in the DisplayImage
 void WheelEvent::clearScene() {
     if(!scene){
         return;

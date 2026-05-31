@@ -1,3 +1,12 @@
+/*
+ * wheelevent.h
+ *
+ * This header file represents the WheelEvent class, which is responsible for scaling the images in the DisplayImage class
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef WHEELEVENT_H
 #define WHEELEVENT_H
 

@@ -1,5 +1,15 @@
+/*
+ * converter.cpp
+ *
+ * This source file implements the logic of the methods for the class Converter
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include "converter.h"
 
+//Method to convert the variable of the type cv::Mat to QImage
 QImage Converter::MatToQImge(const cv::Mat& image){
     if(image.empty()){
         return QImage();
@@ -15,6 +25,7 @@ QImage Converter::MatToQImge(const cv::Mat& image){
     return QImage();
 }
 
+//Method to convert the variable of the type QImage to cv::Mat
 cv::Mat Converter::QImageToMat(const QImage& image){
     if(image.isNull()){
         return cv::Mat();

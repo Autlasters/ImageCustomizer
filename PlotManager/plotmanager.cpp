@@ -1,9 +1,16 @@
-#include "plotmanager.h"
+/*
+ * plotmanager.cpp
+ *
+ * This source file implements the logic of the methods of the class PlotManager
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 
 #include <opencv2/opencv.hpp>
+#include "plotmanager.h"
 
-PlotManager::PlotManager() {}
-
+//Method to calculate the x axis values of the plotting area
 QVector<double> PlotManager::calculateHorizontalValues(const QVector<double> &values) {
     QVector<double> xValeus(values.size());
     for (int i = 0; i < values.size(); ++i) {
@@ -12,6 +19,7 @@ QVector<double> PlotManager::calculateHorizontalValues(const QVector<double> &va
     return xValeus;
 }
 
+//Method to calculate the differential curve
 QVector<double> PlotManager::calculateDifferentialCurve(const QVector<double> &originalValues, const QVector<double> &processedValues) {
     QVector<double> differentialValues(originalValues.size());
     for(int i = 0; i <  originalValues.size(); ++i){
@@ -20,6 +28,7 @@ QVector<double> PlotManager::calculateDifferentialCurve(const QVector<double> &o
     return differentialValues;
 }
 
+//Method to calculate the differential smoothed curve
 QVector<double> PlotManager::calculateDifferentialSmoothedCurve(const QVector<double> &originalValues, const QVector<double> &processedValues) {
     QVector<double> differentialValues(originalValues.size());
     cv::Mat differentialValuesMat(1, originalValues.size(), CV_64F);
@@ -36,6 +45,7 @@ QVector<double> PlotManager::calculateDifferentialSmoothedCurve(const QVector<do
     return differentialValues;
 }
 
+//Method to calculate the smoothed curves
 std::pair<QVector<double>, QVector<double> > PlotManager::calculateSmoothedCurves(const QVector<double> &originalValues,
                                                                                    const QVector<double> &processedValues) {
     cv::Mat originalValuesMat(1, originalValues.size(), CV_64F);
@@ -57,6 +67,7 @@ std::pair<QVector<double>, QVector<double> > PlotManager::calculateSmoothedCurve
     return {originalValuesSmoothed, processedValuesSmoothed};
 }
 
+//Method to calculate the linear interpolation
 QVector<double> PlotManager::linearInterpolation(const QVector<double>& values, const int &size) {
     QVector<double> result(size);
     int inputSize = values.size();

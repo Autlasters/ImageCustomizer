@@ -1,3 +1,12 @@
+/*
+ * imageio.h
+ *
+ * This header file represents the ImageIO class, which is responsible for saving an image in a folder
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef IMAGEIO_H
 #define IMAGEIO_H
 

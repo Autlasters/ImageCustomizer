@@ -1,3 +1,12 @@
+/*
+ * imagetosignalmanager.h
+ *
+ * This header file represents the ImageToSignalManager class, which is responsible for coverting the image in to a signal
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef IMAGETOSIGNALMANAGER_H
 #define IMAGETOSIGNALMANAGER_H
 
@@ -13,7 +22,6 @@ private:
     cv::Mat originalGrayScaledImage;
     cv::Mat processedGrayScaledImage;
 public:
-    ImageToSignalManager();
     void setImages(const QImage& originalImage, const QImage& processedImage);
     QVector<double> getOriginalGrayScaledImageRowValues(const int& y) const;
     QVector<double> getProcessedGrayScaledImageRowValues(const int& y) const;

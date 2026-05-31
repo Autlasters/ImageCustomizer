@@ -1,3 +1,12 @@
+/*
+ * draganddropevent.h
+ *
+ * This header file represents the CustomView class, which is responsible for the drag&drop event in the MainWindow
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef DRAGANDDROPEVENT_H
 #define DRAGANDDROPEVENT_H
 

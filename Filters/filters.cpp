@@ -1,8 +1,18 @@
-#include <QStringList>
+/*
+ * filters.cpp
+ *
+ * This source file implements the logic of the methods of the filter classes
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 
+#include <QStringList>
 #include "filters.h"
 
 //-----------------------------------------------------Black&White Filter-----------------------------------------------------
+
+//Method to apply the filter
 void BlackAndWhiteFilter::apply(cv::Mat& image) {
     if (image.empty()){
         return;
@@ -14,11 +24,14 @@ void BlackAndWhiteFilter::apply(cv::Mat& image) {
     image = result;
 }
 
+//Method to get the Filter class name
 QString BlackAndWhiteFilter::getFilterName() const{
     return "BlackAndWhite";
 }
 
 //-----------------------------------------------------Blur Filter-----------------------------------------------------
+
+//Method to apply the filter
 void BlurFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -31,11 +44,14 @@ void BlurFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString BlurFilter::getFilterName() const{
     return "Blur";
 }
 
 //-----------------------------------------------------Bright Filter-----------------------------------------------------
+
+//Method to apply the filter
 void BrightFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -48,11 +64,14 @@ void BrightFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString BrightFilter::getFilterName() const{
     return "Bright";
 }
 
 //-----------------------------------------------------Warm Filter-----------------------------------------------------
+
+//Method to apply the filter
 void WarmFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -99,11 +118,14 @@ void WarmFilter::apply(cv::Mat& image){
     cv::cvtColor(hsv, image, cv::COLOR_HSV2BGR);
 }
 
+//Method to get the Filter class name
 QString WarmFilter::getFilterName() const{
     return "Warm";
 }
 
 //-----------------------------------------------------Cold Filter-----------------------------------------------------
+
+//Method to apply the filter
 void ColdFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -150,11 +172,14 @@ void ColdFilter::apply(cv::Mat& image){
     cv::cvtColor(hsv, image, cv::COLOR_HSV2BGR);
 }
 
+//Method to get the Filter class name
 QString ColdFilter::getFilterName() const{
     return "Cold";
 }
 
 //-----------------------------------------------------Sharp Filter-----------------------------------------------------
+
+//Method to apply the filter
 void SharpFilter::apply(cv::Mat& image){
     if(image.empty()){
         return;
@@ -172,11 +197,14 @@ void SharpFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString SharpFilter::getFilterName() const{
     return "Sharp";
 }
 
 //-----------------------------------------------------Sepia Filter-----------------------------------------------------
+
+//Method to apply the filter
 void SepiaFilter::apply(cv::Mat& image){
     if(image.empty()){
         return;
@@ -202,11 +230,14 @@ void SepiaFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString SepiaFilter::getFilterName() const{
     return "Sepia";
 }
 
 //-----------------------------------------------------Edge Detection Filter-----------------------------------------------------
+
+//Method to apply the filter
 void EdgeDetectionFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -236,11 +267,14 @@ void EdgeDetectionFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString EdgeDetectionFilter::getFilterName() const{
     return "EdgeDetection";
 }
 
 //-----------------------------------------------------Negative Filter-----------------------------------------------------
+
+//Method to apply the filter
 void NegativeFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -266,11 +300,14 @@ void NegativeFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString NegativeFilter::getFilterName() const{
     return "Negative";
 }
 
 //-----------------------------------------------------Pencil Sketch Filter-----------------------------------------------------
+
+//Method to apply the filter
 void PencilSketchFilter::apply(cv::Mat& image){
     if (image.empty()){
         return;
@@ -296,11 +333,14 @@ void PencilSketchFilter::apply(cv::Mat& image){
     image = result;
 }
 
+//Method to get the Filter class name
 QString PencilSketchFilter::getFilterName() const{
     return "Pencil Sketch";
 }
 
 //-----------------------------------------------------Resizing Filter-----------------------------------------------------
+
+//Method to determine the resizing dimension
 void ResizingFilter::determineDimension(const QString &dimension) {
     if(dimension.isEmpty()){
         return;
@@ -312,6 +352,7 @@ void ResizingFilter::determineDimension(const QString &dimension) {
     }
 }
 
+//Method to apply the filter
 void ResizingFilter::apply(cv::Mat &image) {
     if (image.empty()){
         return;
@@ -324,12 +365,15 @@ void ResizingFilter::apply(cv::Mat &image) {
     image = result;
 }
 
+//Method to get the Filter class name
 QString ResizingFilter::getFilterName() const {
     return "Resizing Filter";
 }
 
 
 //-----------------------------------------------------ColorSapce LAB Filter----------------------------------------------------
+
+//Method to apply the filter
 void LABFilter::apply(cv::Mat &image) {
     if(image.empty()){
         return;
@@ -344,11 +388,14 @@ void LABFilter::apply(cv::Mat &image) {
     image = result;
 }
 
+//Method to get the Filter class name
 QString LABFilter::getFilterName() const {
     return "LAB Filter";
 }
 
 //-----------------------------------------------------ColorSapce YCrCb Filter----------------------------------------------------
+
+//Method to apply the filter
 void YCrCbFilter::apply(cv::Mat &image) {
     if(image.empty()){
         return;
@@ -363,11 +410,14 @@ void YCrCbFilter::apply(cv::Mat &image) {
     image = result;
 }
 
+//Method to get the Filter class name
 QString YCrCbFilter::getFilterName() const {
     return "YCrCb Filter";
 }
 
 //-----------------------------------------------------ColorSapce HSV Filter----------------------------------------------------
+
+//Method to apply the filter
 void HSVFilter::apply(cv::Mat &image) {
     if(image.empty()){
         return;
@@ -382,6 +432,7 @@ void HSVFilter::apply(cv::Mat &image) {
     image = result;
 }
 
+//Method to get the Filter class name
 QString HSVFilter::getFilterName() const {
     return "HSV Filter";
 }

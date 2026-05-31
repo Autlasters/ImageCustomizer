@@ -1,3 +1,12 @@
+/*
+ * imagemanager.h
+ *
+ * This header file represents the ImageManager class, which is responsible for interacting with the image
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef IMAGEMANAGER_H
 #define IMAGEMANAGER_H
 
@@ -11,7 +20,7 @@ private:
     cv::Mat processedImage;
 public:
     bool loadImage(const QString& path);
-    void applyDefaultFilter(const QString& filterName);
+    void applyFilter(const QString& filterName);
     void applyResizingFilter(const QString& dimension);
     void resetOriginalImage();
     void resetProcessedImage();

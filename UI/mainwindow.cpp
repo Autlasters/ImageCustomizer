@@ -1,11 +1,20 @@
+/*
+ * mainwindow.cpp
+ *
+ * This source file implements the logic of the methods of the class MainWindow
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include<QFileDialog>
 #include<QDir>
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "converter.h"
 #include "filterscollector.h"
 
+//Constructor
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow), settings("ImageCustomizer", "Settings"),
                                                                                                 mode(Mode::DefaultMode) {
     ui->setupUi(this);
@@ -21,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         ui->DisplayFolderPathField->setText(savingFolderPath);
     }
 
-    connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callExit);
+    connect(ui->exitButton, &QPushButton::clicked, this, &MainWindow::callClose);
     connect(ui->processButton, &QPushButton::clicked, this, &MainWindow::callProcess);
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::callClear);
     connect(ui->setFolderButton, &QPushButton::clicked, this, &MainWindow::callSearch);
@@ -34,10 +43,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     connect(view, &CustomView::imageDropped, this, &MainWindow::changeButtonsState);
 }
 
+//Destructor
 MainWindow::~MainWindow() {
     delete ui;
 }
 
+//Method to set the path to the saving folder
 void MainWindow::callSearch() {
     QString savingFolderPath = settings.value("savingFolderPath", "C://").toString();
     QString folderPath = QFileDialog::getExistingDirectory(this, tr("Set folder"), savingFolderPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -48,6 +59,7 @@ void MainWindow::callSearch() {
     settings.setValue("savingFolderPath", folderPath);
 }
 
+//Method to process the image
 void MainWindow::callProcess() {
     QString filter = ui->filtersList->currentText();
     if(filter.isEmpty()){
@@ -57,7 +69,7 @@ void MainWindow::callProcess() {
         imageManager.applyResizingFilter(filter);
     }
     else{
-        imageManager.applyDefaultFilter(filter);
+        imageManager.applyFilter(filter);
     }
     displayWindow = new DisplayImage(this);
     displayWindow->setAttribute(Qt::WA_DeleteOnClose);
@@ -76,6 +88,7 @@ void MainWindow::callProcess() {
     displayWindow->show();
 }
 
+//Method to clean the drag&drop field
 void MainWindow::callClear() {
     view->clearScene();
     ui->processButton->setEnabled(false);
@@ -85,10 +98,12 @@ void MainWindow::callClear() {
     imagesLoaded = false;
 }
 
-void MainWindow::callExit() {
+//Method to close the application
+void MainWindow::callClose() {
     close();
 }
 
+//Method to load an image
 void MainWindow::imageDropped(const QString &path) {
     if(!imageManager.loadImage(path)){
         return;
@@ -96,6 +111,7 @@ void MainWindow::imageDropped(const QString &path) {
     imagesLoaded = true;
 }
 
+//Method to save an image
 void MainWindow::saveImage(const QString &name, const QString& extension, const QImage &image) {
     if(ui->DisplayFolderPathField->text().isEmpty()){
         return;
@@ -107,11 +123,13 @@ void MainWindow::saveImage(const QString &name, const QString& extension, const 
     userImageIO.saveImage(mat, name, extension);
 }
 
+//Method to change the buttons' state when the image is loaded into the application
 void MainWindow::changeButtonsState() {
     ui->processButton->setEnabled(imagesLoaded && ui->filtersList->currentIndex() != -1);
     ui->clearButton->setEnabled(imagesLoaded);
 }
 
+//Method to fill filters dropdown dynamically
 void MainWindow::fillFiltersDropdown() {
     ui->filtersList->clear();
     switch(mode){
@@ -134,12 +152,14 @@ void MainWindow::fillFiltersDropdown() {
     ui->filtersList->setCurrentIndex(-1);
 }
 
+//Method to fill the mode dropdown
 void MainWindow::fillModeDropDown() {
     ui->modeDropdown->addItem("Filters", Mode::DefaultMode);
     ui->modeDropdown->addItem("Resizing", Mode::ResizingMode);
     ui->modeDropdown->addItem("Color Spaces", Mode::ColorSpacesMode);
 }
 
+//Method to change the mode
 void MainWindow::changeMode() {
     QVariant option = ui->modeDropdown->currentData();
     mode = static_cast<Mode>(option.toInt());

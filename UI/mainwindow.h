@@ -1,10 +1,17 @@
+/*
+ * mainwindow.h
+ *
+ * This header file represents the MainWindow class, which is responsible for showing the main window of the application
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QSettings>
 #include "opencv2/core/core.hpp"
-
 #include "imagemanager.h"
 #include "imageio.h"
 #include "displayimage.h"
@@ -33,7 +40,7 @@ public slots:
     void callSearch();
     void callProcess();
     void callClear();
-    void callExit();
+    void callClose();
     void imageDropped(const QString& path);
     void saveImage(const QString& name, const QString& extension, const QImage& image);
     void changeButtonsState();

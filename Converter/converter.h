@@ -1,3 +1,12 @@
+/*
+ * converter.h
+ *
+ * This header file represents the Converter class, which is responsible for converting the cv::Mat variable to QImage and vice versa
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef CONVERTER_H
 #define CONVERTER_H
 

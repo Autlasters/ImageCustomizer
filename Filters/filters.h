@@ -1,3 +1,12 @@
+/*
+ * filters.h
+ *
+ * This header file represents the Filter classes, which are responsible for customizing the image content
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef FILTERS_H
 #define FILTERS_H
 

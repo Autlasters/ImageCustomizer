@@ -1,10 +1,19 @@
-#include "plotwindow.h"
-#include "ui_plotwindow.h"
+/*
+ * plotwindow.cpp
+ *
+ * This source file implements the logic of the methods of the class PlotWindow
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 
 #include <opencv2/opencv.hpp>
 #include <QToolTip>
 #include <QMimeData>
+#include "plotwindow.h"
+#include "ui_plotwindow.h"
 
+//Constructor
 PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow), plotManager(PlotManager()), mainMode(MainMode::DefaultMode),
                                                                                 defaultCurvesMode(DefaultCurvesMode::NormalCurves),
                                                                                 rgbCurvesMode(RGBCurvesMode::OriginalRGBCurves) {
@@ -44,10 +53,12 @@ PlotWindow::PlotWindow(QWidget *parent): QDialog(parent), ui(new Ui::PlotWindow)
     QTimer::singleShot(0, this, [this]() {emit ui->rowSlider->valueChanged(ui->rowSlider->value());});
 }
 
+//Destructor
 PlotWindow::~PlotWindow() {
     delete ui;
 }
 
+//Method to set the theme of the PlotWindow
 void PlotWindow::setTheme() {
     QColor axisColor = QColor(200, 200, 200);
     QColor gridColor = QColor(80, 80, 80);
@@ -70,6 +81,7 @@ void PlotWindow::setTheme() {
     ui->plotArea->yAxis->grid()->setPen(QPen(gridColor, 1, Qt::DashLine));
 }
 
+//Method to set the curves legend
 void PlotWindow::setLegend() {
     ui->plotArea->legend->setBrush(QBrush(this->palette().window().color()));
     ui->plotArea->legend->setBorderPen(QPen(Qt::gray));
@@ -83,6 +95,7 @@ void PlotWindow::setLegend() {
     ui->plotArea->legend->setVisible(true);
 }
 
+//Method to update the curves legend layout
 void PlotWindow::updateLegendLayout() {
     ui->plotArea->legend->clearItems();
     for(int i = 0; i < ui->plotArea->graphCount(); ++i){
@@ -93,6 +106,7 @@ void PlotWindow::updateLegendLayout() {
     }
 }
 
+//Method to update the curves legend
 void PlotWindow::updateLegend() {
     if(mainMode == MainMode::DefaultMode) {
         if(defaultCurvesMode == DefaultCurvesMode::NormalCurves || defaultCurvesMode == DefaultCurvesMode::SmoothedCurves){
@@ -189,18 +203,23 @@ void PlotWindow::updateLegend() {
     updateLegendLayout();
     ui->plotArea->replot();
 }
+
+//Method to set the slider range
 void PlotWindow::setRowSliderRange(const int &value) {
     ui->rowSlider->setMaximum(value);
 }
 
+//Method to set the x axis
 void PlotWindow::setHorizontalAxis(const int &xAxis) {
     ui->plotArea->xAxis->setRange(0, xAxis);
 }
 
+//Method to lock the RGB mode if the image is in the grayscale format
 void PlotWindow::lockRGBMode() {
     ui->rgbModeCheckBox->setEnabled(false);
 }
 
+//Method to get mode of the PlotWindow
 QString PlotWindow::getMode() const {
     QString mode;
     if(mainMode == MainMode::DefaultMode){
@@ -212,8 +231,7 @@ QString PlotWindow::getMode() const {
     return mode;
 }
 
-
-
+//Method to draw the curves by the gray scale values
 void PlotWindow::drawGrayScaledCurves(const QVector<double>& origianlValues, const QVector<double>& processedValues) {
     xAxis = plotManager.calculateHorizontalValues(origianlValues);
     QVector<double> currentProcessedValues = (origianlValues.size() != processedValues.size())
@@ -248,6 +266,7 @@ void PlotWindow::drawGrayScaledCurves(const QVector<double>& origianlValues, con
     ui->plotArea->replot();
 }
 
+//Method to draw the curves by the RGB values
 void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<double> &> red,
                                const std::pair<QVector<double> &, const QVector<double> &> green,
                                const std::pair<QVector<double> &, const QVector<double> &> blue){
@@ -397,6 +416,7 @@ void PlotWindow::drawRBGCurves(const std::pair<QVector<double> &, const QVector<
     ui->plotArea->replot();
 }
 
+//Method to change the main mode of the PlotWindow
 void PlotWindow::changeMainMode(bool checked) {
     if(checked == true){
         mainMode = MainMode::RGBMode;
@@ -407,6 +427,7 @@ void PlotWindow::changeMainMode(bool checked) {
     emit mainModeChanged();
 }
 
+//Method to change the curves mode of the PlotWindow
 void PlotWindow::changeCurvesMode() {
     QVariant option = ui->modeDropDown->currentData();
     if(mainMode == MainMode::DefaultMode){
@@ -419,6 +440,7 @@ void PlotWindow::changeCurvesMode() {
     updateLegend();
 }
 
+//Method to fill the dropdown dynamically
 void PlotWindow::fillModeDropDown() {
     ui->modeDropDown->clear();
     if(mainMode == MainMode::RGBMode){
@@ -450,6 +472,7 @@ void PlotWindow::fillModeDropDown() {
     }
 }
 
+//Method to take the screenshot of the plotting area
 void PlotWindow::takeScreenShot() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
     QString screenShotName = ui->modeDropDown->currentText() + ".jpg";
@@ -462,6 +485,7 @@ void PlotWindow::takeScreenShot() {
     QToolTip::showText(QCursor::pos(), "Saved to clipboard");
 }
 
+//Method to close the window
 void PlotWindow::callClose() {
     close();
 }

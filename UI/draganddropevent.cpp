@@ -1,5 +1,15 @@
+/*
+ * displayimage.cpp
+ *
+ * This source file implements the logic of the methods of the class CustomView
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include "draganddropevent.h"
 
+//Constructor
 CustomView::CustomView(QWidget *parent): QGraphicsView(parent), scene(new QGraphicsScene(this)) {
     setAcceptDrops(true);
     setScene(scene);
@@ -7,21 +17,25 @@ CustomView::CustomView(QWidget *parent): QGraphicsView(parent), scene(new QGraph
     showPlaceHolder();
 }
 
+//DragEnter event
 void CustomView::dragEnterEvent(QDragEnterEvent *event) {
     if(event->mimeData()->hasUrls()){
         event->acceptProposedAction();
     }
 }
 
+//DragLeave event
 void CustomView::dragLeaveEvent(QDragLeaveEvent *event) {
     event->accept();
 }
 
+//DragMove event
 void CustomView::dragMoveEvent(QDragMoveEvent *event) {
     event->accept();
     event->acceptProposedAction();
 }
 
+//Drop event
 void CustomView::dropEvent(QDropEvent *event) {
     if(event->source() == this){
         return;
@@ -50,6 +64,7 @@ void CustomView::dropEvent(QDropEvent *event) {
     }
 }
 
+//Method to clean the drag&drop field
 void CustomView::clearScene() {
     if(!scene){
         return;
@@ -62,6 +77,7 @@ void CustomView::clearScene() {
     viewport()->update();
 }
 
+//Method to show the placeholder in the drag&drop field
 void CustomView::showPlaceHolder() {
     QGraphicsTextItem *text = scene->addText("Drag&Drop Image Here");
     QFont font;

@@ -1,10 +1,18 @@
+/*
+ * displayimage.h
+ *
+ * This header file represents the DisplayImage class, which is responsible for showing the images after processing
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #ifndef DISPLAYIMAGE_H
 #define DISPLAYIMAGE_H
 
 #include <QDialog>
 #include <QImage>
 #include <QStringList>
-
 #include "saveimage.h"
 #include "wheelevent.h"
 #include "plotwindow.h"

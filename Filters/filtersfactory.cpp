@@ -1,5 +1,15 @@
+/*
+ * filtersfactory.cpp
+ *
+ * This source file implements the logic of the method of the class FiltersFactory
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include "filtersfactory.h"
 
+//Method to create the needed filter
 std::unique_ptr<Filter> FiltersFactory::createFilter(const QString& filterName){
     if(filterName == "Black&White"){
         return std::make_unique<BlackAndWhiteFilter>();

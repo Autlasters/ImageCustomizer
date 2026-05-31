@@ -1,8 +1,16 @@
+/*
+ * imagetosignalmanager.cpp
+ *
+ * This source file implements the logic of the methods of the class ImageToSignalManager
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
+
 #include "imagetosignalmanager.h"
 #include "converter.h"
 
-ImageToSignalManager::ImageToSignalManager() {}
-
+//Method to set the images
 void ImageToSignalManager::setImages(const QImage &originalImage, const QImage &processedImage) {
     if(originalImage.isNull() || processedImage.isNull()){
         return;
@@ -27,6 +35,7 @@ void ImageToSignalManager::setImages(const QImage &originalImage, const QImage &
     }
 }
 
+//Method to get the row of the original grayscale image
 QVector<double> ImageToSignalManager::getOriginalGrayScaledImageRowValues(const int &y) const {
     cv::Mat rowMat = originalGrayScaledImage.row(y);
     QVector<double> values;
@@ -37,6 +46,7 @@ QVector<double> ImageToSignalManager::getOriginalGrayScaledImageRowValues(const 
     return values;
 }
 
+//Method to get the row of the processed grayscale image
 QVector<double> ImageToSignalManager::getProcessedGrayScaledImageRowValues(const int &y) const {
     cv::Mat rowMat = processedGrayScaledImage.row(y);
     QVector<double> values;
@@ -47,6 +57,7 @@ QVector<double> ImageToSignalManager::getProcessedGrayScaledImageRowValues(const
     return values;
 }
 
+//Method to get the row of the original RGB image
 std::tuple<QVector<double>, QVector<double>, QVector<double> > ImageToSignalManager::getOriginalRGBImageRowValues(const int &y) const {
     QVector<double> blue, green, red;
     cv::Mat rowMat = originalImage.row(y);
@@ -59,6 +70,7 @@ std::tuple<QVector<double>, QVector<double>, QVector<double> > ImageToSignalMana
     return {red, green, blue};
 }
 
+//Method to get the row of the processed RGB image
 std::tuple<QVector<double>, QVector<double>, QVector<double> > ImageToSignalManager::getProcessedRGBImageRowValues(const int &y) const {
     QVector<double> blue, green, red;
     cv::Mat rowMat = processedImage.row(y);

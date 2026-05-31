@@ -1,8 +1,17 @@
-#include <QGraphicsPixmapItem>
+/*
+ * displayimage.cpp
+ *
+ * This source file implements the logic of the methods of the class DisplayImage
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 
+#include <QGraphicsPixmapItem>
 #include "displayimage.h"
 #include "ui_displayimage.h"
 
+//Constructor
 DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::DisplayImage), imageToSignalManager(ImageToSignalManager()) {
     ui->setupUi(this);
 
@@ -15,6 +24,12 @@ DisplayImage::DisplayImage(QWidget *parent): QDialog(parent), ui(new Ui::Display
     view = ui->displayArea;
 }
 
+//Destructor
+DisplayImage::~DisplayImage() {
+    delete ui;
+}
+
+//Method to set the images
 void DisplayImage::setImages(const QImage& processedImage, const QImage& originalImage) {
     if(processedImage.isNull() || originalImage.isNull()){
         view->clearScene();
@@ -26,11 +41,13 @@ void DisplayImage::setImages(const QImage& processedImage, const QImage& origina
     emit imagesLoaded();
 }
 
+//Method to set the permission for the image saving
 void DisplayImage::setPermission(bool savePermission) {
     this->savePermission = savePermission;
     ui->saveButton->setEnabled(this->savePermission);
 }
 
+//Method to set the chosen extension
 void DisplayImage::setExtensions(const QStringList &extensions) {
     if(extensions.empty()){
         return;
@@ -38,16 +55,14 @@ void DisplayImage::setExtensions(const QStringList &extensions) {
     this->extensions = extensions;
 }
 
+//Method to verify if the processed image is in grayscale format
 void DisplayImage::checkProcessedImage() {
     if(processedImage.format() == QImage::Format_Grayscale8){
         plotWindow->lockRGBMode();
     }
 }
 
-DisplayImage::~DisplayImage() {
-    delete ui;
-}
-
+//Method to call the window for the image saving
 void DisplayImage::callSave() {
     saveWinodw = new SaveImage(extensions, this);
     connect(saveWinodw, &SaveImage::saveConfirmed, this, [this](const QString& name, const QString& extension) {emit saveRequest(name, extension,
@@ -55,6 +70,7 @@ void DisplayImage::callSave() {
     saveWinodw->exec();
 }
 
+//Method to show the processed image
 void DisplayImage::callProcessedImage(){
     view->setImage(processedImage);
     ui->saveButton->setEnabled(savePermission);
@@ -62,6 +78,7 @@ void DisplayImage::callProcessedImage(){
     ui->displayOriginalImageButton->setEnabled(true);
 }
 
+//Method to show the original image
 void DisplayImage::callOriginalImage(){
     view->setImage(originalImage);
     ui->saveButton->setEnabled(false);
@@ -69,6 +86,7 @@ void DisplayImage::callOriginalImage(){
     ui->displayProcessedImageButton->setEnabled(true);
 }
 
+//Method to call the curve analysis window
 void DisplayImage::callCurveAnalysis() {
     plotWindow = new PlotWindow(this);
     plotWindow->setRowSliderRange(originalImage.height()-1);
@@ -82,6 +100,7 @@ void DisplayImage::callCurveAnalysis() {
     plotWindow->exec();
 }
 
+//Method to calculate the curves value for the curves analysis
 void DisplayImage::calculateValues(const int &index){
     int mappedIndex = index;
     if(originalImage.height() != processedImage.height()){
@@ -102,6 +121,7 @@ void DisplayImage::calculateValues(const int &index){
     }
 }
 
+//Method to close the window
 void DisplayImage::callClose() {
     close();
 }

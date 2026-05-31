@@ -1,8 +1,15 @@
+/*
+ * plotwindow.h
+ *
+ * This header file represents the PlotWindow class, which is responsible for plotting and showing the signal's curves
+ *
+ * Built with C++ in Qt Creator using MSVC 2022 and QMake
+ *
+ */
 #ifndef PLOTWINDOW_H
 #define PLOTWINDOW_H
 
 #include <QDialog>
-
 #include "plotmanager.h"
 
 namespace Ui { class PlotWindow; }
