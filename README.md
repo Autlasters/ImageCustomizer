@@ -20,7 +20,7 @@ How to build and run the application:
   There are two ways to do it:
     -Using the Qt environment:
       To build and run the project, clone all the files to any folder on your computer and run the ImageCustomizer.pro file. 
-      Qt Creator will automatically load every project file. All that's left is to build and open the application.
+      Qt Creator will automatically load the project's content. All that's left is to build and open the application.
       !Important notes! 
         This project uses MSVC 2022 as the maintenance tool. You need to use it to build and run the project successfully
     -Using exe file:
